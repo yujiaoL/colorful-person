@@ -172,7 +172,7 @@
         }
 
         .question-title {
-            font-size: 24px;
+            font-size: 20px;
             font-weight: 800;
             line-height: 1.55;
             margin-bottom: 28px;
@@ -203,7 +203,7 @@
         .option-label {
             display: block;
             color: #374151;
-            font-size: 16px;
+            font-size: 15px;
             line-height: 1.6;
             font-weight: 500;
         }
@@ -484,7 +484,7 @@
         }
 
         .glitch-bg {
-            background: #000000;
+            background: #000000 !important;
         }
 
         .glitch-bg::before,
@@ -516,18 +516,6 @@
                 rgba(0, 255, 255, 0.18) 30px
             );
             animation: glitch-anim-2 0.4s infinite alternate;
-        }
-
-        .text-white {
-            color: #ffffff;
-        }
-
-        .text-dark {
-            color: #111827;
-        }
-
-        .text-gray {
-            color: #9ca3af;
         }
 
         @keyframes pulse {
@@ -567,7 +555,7 @@
             }
 
             .question-title {
-                font-size: 22px;
+                font-size: 20px;
             }
 
             .result-name {
@@ -594,7 +582,7 @@
                 <div class="progress-wrap">
                     <div class="progress-meta">
                         <span>SCANNED</span>
-                        <span id="progress-text">1 / 6</span>
+                        <span id="progress-text">1 / 19</span>
                     </div>
                     <div class="progress-bar">
                         <div id="progress-fill" class="progress-fill"></div>
@@ -667,269 +655,305 @@
 
     <script>
         const resultDB = {
-    // ==========================================
-    // 一、 单极主导态 (绝对的纯粹)
-    // ==========================================
-    'A': { 
-        name: '警告荧光红', 
-        state: '随时爆炸态', 
-        desc: '你的忍耐额度早已透支，现在全靠一口怒气给身体供电。像一颗拔了引信的闪光雷，随时准备创飞地球上的每一个人。与其精神内耗自己，不如发疯外耗别人。', 
-        do: '物理破坏废弃物品', 
-        dont: '回复工作群消息', 
-        bgClass: 'bg-[#ff003c]', 
-        textColor: 'text-white' 
-    },
-    'B': { 
-        name: '防窥膜黑', 
-        state: '绝对隔离态', 
-        desc: '拥有极致的物理与精神双重屏蔽机制。你不仅给手机贴了防窥膜，还给灵魂焊了防盗门。结界太厚，别人进不来，有时候你自己想出来透气都找不到门。', 
-        do: '无限期拉黑讨厌的人', 
-        dont: '参加强行热络的团建', 
-        bgClass: 'bg-[#1a1a1a]', 
-        textColor: 'text-white' 
-    },
-    'C': { 
-        name: '沉迷内耗紫', 
-        state: '脑内小剧场', 
-        desc: '紫气东来全是愁。别人的一句“哦”能在你脑子里掀起海啸。表面波澜不惊，其实脑内已经演完八十集谍战剧。精力全被自己的反刍抽干了。', 
-        do: '把手机静音扔进抽屉', 
-        dont: '睡前复盘今天说错的话', 
-        bgClass: 'bg-[#6b21a8]', 
-        textColor: 'text-white' 
-    },
-    'D': { 
-        name: '掉线水泥灰', 
-        state: '超然摆烂态', 
-        desc: '彻底与世界达成了黑色幽默般的和解（放弃挣扎）。世界是个草台班子，而你连马扎都不想搬，只想躺在台下。连焦虑都懒得焦虑，主打“我就烂”。', 
-        do: '毫无目的地盯着天花板', 
-        dont: '做详尽的五年职业规划', 
-        bgClass: 'bg-[#9ca3af]', 
-        textColor: 'text-gray-900' 
-    },
+            'A': { 
+                name: '警告荧光红', state: '随时爆炸态', 
+                desc: '你的忍耐额度早已透支，现在全靠一口怒气给身体供电。像一颗拔了引信的闪光雷，随时准备创飞地球上的每一个人。与其精神内耗自己，不如发疯外耗别人。', 
+                do: '物理破坏废弃物品', dont: '回复工作群消息', 
+                background: '#ff003c', textColor: '#ffffff' 
+            },
+            'B': { 
+                name: '防窥膜黑', state: '绝对隔离态', 
+                desc: '拥有极致的物理与精神双重屏蔽机制。你不仅给手机贴了防窥膜，还给灵魂焊了防盗门。结界太厚，别人进不来，有时候你自己想出来透气都找不到门。', 
+                do: '无限期拉黑讨厌的人', dont: '参加强行热络的团建', 
+                background: '#1a1a1a', textColor: '#ffffff' 
+            },
+            'C': { 
+                name: '沉迷内耗紫', state: '脑内小剧场', 
+                desc: '紫气东来全是愁。别人的一句“哦”能在你脑子里掀起海啸。表面波澜不惊，其实脑内已经演完八十集谍战剧。精力全被自己的反刍抽干了。', 
+                do: '把手机静音扔进抽屉', dont: '睡前复盘今天说错的话', 
+                background: '#6b21a8', textColor: '#ffffff' 
+            },
+            'D': { 
+                name: '掉线水泥灰', state: '超然摆烂态', 
+                desc: '彻底与世界达成了黑色幽默般的和解（放弃挣扎）。世界是个草台班子，而你连马扎都不想搬，只想躺在台下。连焦虑都懒得焦虑，主打“我就烂”。', 
+                do: '毫无目的地盯着天花板', dont: '做详尽的五年职业规划', 
+                background: '#9ca3af', textColor: '#111827' 
+            },
+            'AB': { 
+                name: '赛博朋克霓虹', state: '带刺铁丝网', 
+                desc: '带着极强的攻击性，但又有一层冰冷的边界感。你就像赛博朋克里的霓虹灯，刺眼且极具警告意味，谁敢越过你的安全距离，立刻执行言语爆破。', 
+                do: '看一部暴力美学电影', dont: '对陌生人展露善意', 
+                background: 'linear-gradient(135deg, #ff00ff, #00ffff)', textColor: '#111111' 
+            },
+            'BA': { 
+                name: '哑光暗杀黑', state: '静默狙击手', 
+                desc: '平时冷酷自闭、绝对隐形，把所有的愤怒都压缩在极致的防御外壳下。不叫的狗最咬人，一旦有人试图撕开你的防御，你会直接让对方下不来台。', 
+                do: '练习冷笑', dont: '在群里活跃气氛', 
+                background: 'linear-gradient(135deg, #2d2d2d, #8b0000)', textColor: '#ffffff' 
+            },
+            'AC': { 
+                name: '高压锅蒸汽白', state: '沸腾边缘态', 
+                desc: '看着纯洁无害还在冒气，其实内耗已经达到物理沸点。理智在死死压抑着掀桌子的冲动，只要谁现在敢碰一下盖子，你马上炸开，把厨房夷为平地。', 
+                do: '找个空旷的地方大叫', dont: '继续憋着装老好人', 
+                background: 'radial-gradient(circle, #ffffff, #fee2e2)', border: '#f87171', textColor: '#111827' 
+            },
+            'CA': { 
+                name: '毒蘑菇斑斓紫', state: '阴阳怪气态', 
+                desc: '脑内剧场极其丰富且带毒，想得太多导致精神异变。你不再自我攻击，而是把内耗转化为毒汁，一开口就是让人无法反驳的高级嘲讽。', 
+                do: '写段子吐槽生活', dont: '劝自己大度一点', 
+                background: 'linear-gradient(135deg, #7c3aed, #ec4899)', textColor: '#ffffff' 
+            },
+            'AD': { 
+                name: '脆皮香蕉黄', state: '光速放弃态', 
+                desc: '网络上的巨人，现实中的脆皮。叫唤得比谁都响亮，放弃得比谁都果断。前一秒“我要毁灭世界”，后一秒“算了太累了，先点个外卖吧”。', 
+                do: '吃点高热量甜食', dont: '立长期的 Flag', 
+                background: '#facc15', textColor: '#111827' 
+            },
+            'DA': { 
+                name: '薛定谔的鸡血红', state: '仰卧起坐态', 
+                desc: '你的摆烂和热血处于高频交替中。躺在床上、盖着被子，却激情四射地在脑内规划如何整顿职场，然后翻个身继续睡。间歇性踌躇满志，持续性混吃等死。', 
+                do: '把脑洞写进备忘录', dont: '立刻花钱报班学习', 
+                background: 'linear-gradient(135deg, #fda4af, #e11d48)', textColor: '#ffffff' 
+            },
+            'BC': { 
+                name: '深海幽灵蓝', state: '抑郁水鬼态', 
+                desc: '极度的社恐患者。选择把自己沉在几万米深、无光的海底。不希望任何人找到你，但在无人知晓的暗处，依然在默默为今天说错的半句话流泪。', 
+                do: '戴最高级别的降噪耳机', dont: '去人多嘈杂的网红店打卡', 
+                background: '#1e3a8a', textColor: '#ffffff' 
+            },
+            'CB': { 
+                name: '褪色老相片黄', state: '怀旧避难所', 
+                desc: '用一层厚厚的怀旧滤镜把自己包裹起来。沉浸在对过去遗憾的反刍里，以此来防御对现实社交和未来的恐惧。你活在昨天，因为明天太可怕。', 
+                do: '整理旧物或老照片', dont: '强迫自己开展新社交', 
+                background: '#d6d3d1', textColor: '#1f2937' 
+            },
+            'BD': { 
+                name: '隐形玻璃色', state: '赛博透明人', 
+                desc: '极致的透明人心态。不想防御谁，也不想攻击谁，只想化作一阵风，在这个世界上毫无痕迹、毫无波澜地混日子，请大家当我不存在。', 
+                do: '开启全网隐身状态', dont: '做任何引人注目的事', 
+                background: 'linear-gradient(135deg, #f3f4f6, #e5e7eb)', textColor: '#9ca3af' 
+            },
+            'DB': { 
+                name: '融化柏油黑', state: '硬壳烂泥态', 
+                desc: '烂泥扶不上墙，并且你还用一层厚厚的黑色硬壳把这滩烂泥包起来了。拒绝外界的任何鸡汤，以极其稳固的姿态瘫在原地，任人踩踏也不想动弹。', 
+                do: '在黑暗的房间里躺平', dont: '看励志演讲', 
+                background: '#3f3f46', textColor: '#d1d5db' 
+            },
+            'CD': { 
+                name: '过期薄荷绿', state: '清醒堕落态', 
+                desc: '一边为未来焦虑得胃疼、整夜失眠，一边又躺在床上狂刷短视频停不下来。充满了清醒的腐朽感，你知道这样不对，但你就是改不了。', 
+                do: '立刻断网五分钟', dont: '看同龄人的成功故事', 
+                background: '#6ee7b7', textColor: '#134e4a' 
+            },
+            'DC': { 
+                name: '电子包浆黄', state: '麻木刺痛态', 
+                desc: '见惯了自己把生活搞砸后的麻木。心里偶尔还会因为错过某些机会而微微刺痛一下，但身体已经产生电子包浆，完全不想起身去补救了。', 
+                do: '洗个极热的热水澡', dont: '深夜算账', 
+                background: '#fef08a', textColor: '#713f12' 
+            },
+            'SSR': { 
+                name: '薛定谔的五彩斑斓黑', state: '系统无法解析', 
+                desc: '四股力量在体内达到诡异平衡。既想毁灭世界又想拯救小猫，既想彻底摆烂又在疯狂内耗。常规色彩已无法定义你的光怪陆离。', 
+                do: '立刻拔掉网线', dont: '试图向人类解释你的脑回路', 
+                background: '#000000', textColor: '#ffffff', isSSR: true 
+            },
+            'SR': { 
+                name: '纯白出家色', state: '赛博木鱼态', 
+                desc: '你的摆烂值突破天际，其余皆空。已经超越了世俗烦恼，进入了敲多了电子木鱼后的赛博禅意状态。施主，这破班不上也罢，万物皆虚。', 
+                do: '去寺庙或者公园散步', dont: '和执念太深的人讲话', 
+                background: '#ffffff', border: '#e5e7eb', textColor: '#d1d5db' 
+            },
+            'UR1': { 
+                name: '频闪警告黄黑条纹', state: '高危隔离区', 
+                desc: '极度精分。在“创飞所有人”和“绝对自闭不理人”之间以毫秒级速度切换。你现在是一个高度危险的精神放射源，靠近你的人非死即伤。', 
+                do: '独自去吃一顿最贵的', dont: '谈恋爱或相亲', 
+                background: 'repeating-linear-gradient(45deg, #eab308, #eab308 20px, #000000 20px, #000000 40px)', textColor: '#ffffff' 
+            },
+            'UR2': { 
+                name: '马赛克乱码色', state: '逻辑彻底崩塌', 
+                desc: '你的选择充满了极端的自我矛盾，大脑已短路，拒绝提供连贯逻辑。精神状态如同被病毒入侵的显示器，建议立刻断电重启。', 
+                do: '强制自己闭眼睡觉', dont: '做任何人生重大决定', 
+                background: 'linear-gradient(to right, #9ca3af, #4b5563)', textColor: '#4ade80', isSSR: true 
+            }
+        };
 
-    // ==========================================
-    // 二、 双轨交错态 (当代人复杂的日常)
-    // ==========================================
-    
-    // 【发疯 A 相关】
-    'AB': { 
-        name: '赛博朋克霓虹', 
-        state: '带刺铁丝网', 
-        desc: '带着极强的攻击性，但又有一层冰冷的边界感。你就像赛博朋克里的霓虹灯，刺眼且极具警告意味，谁敢越过你的安全距离，立刻执行言语爆破。', 
-        do: '看一部暴力美学电影', 
-        dont: '对陌生人展露善意', 
-        style: 'background: linear-gradient(135deg, #ff00ff, #00ffff);', 
-        textColor: 'text-black' 
-    },
-    'BA': { 
-        name: '哑光暗杀黑', 
-        state: '静默狙击手', 
-        desc: '平时冷酷自闭、绝对隐形，把所有的愤怒都压缩在极致的防御外壳下。不叫的狗最咬人，一旦有人试图撕开你的防御，你会直接让对方下不来台。', 
-        do: '练习冷笑', 
-        dont: '在群里活跃气氛', 
-        style: 'background: linear-gradient(135deg, #2d2d2d, #8b0000);', 
-        textColor: 'text-white' 
-    },
-    'AC': { 
-        name: '高压锅蒸汽白', 
-        state: '沸腾边缘态', 
-        desc: '看着纯洁无害还在冒气，其实内耗已经达到物理沸点。理智在死死压抑着掀桌子的冲动，只要谁现在敢碰一下盖子，你马上炸开，把厨房夷为平地。', 
-        do: '找个空旷的地方大叫', 
-        dont: '继续憋着装老好人', 
-        style: 'background: radial-gradient(circle, #ffffff, #fee2e2); border: 4px solid #f87171;', 
-        textColor: 'text-gray-900' 
-    },
-    'CA': { 
-        name: '毒蘑菇斑斓紫', 
-        state: '阴阳怪气态', 
-        desc: '脑内剧场极其丰富且带毒，想得太多导致精神异变。你不再自我攻击，而是把内耗转化为毒汁，一开口就是让人无法反驳的高级嘲讽。', 
-        do: '写段子吐槽生活', 
-        dont: '劝自己大度一点', 
-        style: 'background: linear-gradient(135deg, #7c3aed, #ec4899);', 
-        textColor: 'text-white' 
-    },
-    'AD': { 
-        name: '脆皮香蕉黄', 
-        state: '光速放弃态', 
-        desc: '网络上的巨人，现实中的脆皮。叫唤得比谁都响亮，放弃得比谁都果断。前一秒“我要毁灭世界”，后一秒“算了太累了，先点个外卖吧”。', 
-        do: '吃点高热量甜食', 
-        dont: '立长期的 Flag', 
-        bgClass: 'bg-[#facc15]', 
-        textColor: 'text-gray-900' 
-    },
-    'DA': { 
-        name: '薛定谔的鸡血红', 
-        state: '仰卧起坐态', 
-        desc: '你的摆烂和热血处于高频交替中。躺在床上、盖着被子，却激情四射地在脑内规划如何整顿职场，然后翻个身继续睡。间歇性踌躇满志，持续性混吃等死。', 
-        do: '把脑洞写进备忘录', 
-        dont: '立刻花钱报班学习', 
-        style: 'background: linear-gradient(135deg, #fda4af, #e11d48);', 
-        textColor: 'text-white' 
-    },
-
-    // 【防御 B 与其他组合】
-    'BC': { 
-        name: '深海幽灵蓝', 
-        state: '抑郁水鬼态', 
-        desc: '极度的社恐患者。选择把自己沉在几万米深、无光的海底。不希望任何人找到你，但在无人知晓的暗处，依然在默默为今天说错的半句话流泪。', 
-        do: '戴最高级别的降噪耳机', 
-        dont: '去人多嘈杂的网红店打卡', 
-        bgClass: 'bg-[#1e3a8a]', 
-        textColor: 'text-white' 
-    },
-    'CB': { 
-        name: '褪色老相片黄', 
-        state: '怀旧避难所', 
-        desc: '用一层厚厚的怀旧滤镜把自己包裹起来。沉浸在对过去遗憾的反刍里，以此来防御对现实社交和未来的恐惧。你活在昨天，因为明天太可怕。', 
-        do: '整理旧物或老照片', 
-        dont: '强迫自己开展新社交', 
-        bgClass: 'bg-[#d6d3d1]', 
-        textColor: 'text-gray-800' 
-    },
-    'BD': { 
-        name: '隐形玻璃色', 
-        state: '赛博透明人', 
-        desc: '极致的透明人心态。不想防御谁，也不想攻击谁，只想化作一阵风，在这个世界上毫无痕迹、毫无波澜地混日子，请大家当我不存在。', 
-        do: '开启全网隐身状态', 
-        dont: '做任何引人注目的事', 
-        style: 'background: linear-gradient(135deg, #f3f4f6, #e5e7eb);', 
-        textColor: 'text-gray-400' 
-    },
-    'DB': { 
-        name: '融化柏油黑', 
-        state: '硬壳烂泥态', 
-        desc: '烂泥扶不上墙，并且你还用一层厚厚的黑色硬壳把这滩烂泥包起来了。拒绝外界的任何鸡汤，以极其稳固的姿态瘫在原地，任人踩踏也不想动弹。', 
-        do: '在黑暗的房间里躺平', 
-        dont: '看励志演讲', 
-        bgClass: 'bg-[#3f3f46]', 
-        textColor: 'text-gray-300' 
-    },
-
-    // 【内耗 C 与 摆烂 D】
-    'CD': { 
-        name: '过期薄荷绿', 
-        state: '清醒堕落态', 
-        desc: '一边为未来焦虑得胃疼、整夜失眠，一边又躺在床上狂刷短视频停不下来。充满了清醒的腐朽感，你知道这样不对，但你就是改不了。', 
-        do: '立刻断网五分钟', 
-        dont: '看同龄人的成功故事', 
-        bgClass: 'bg-[#6ee7b7]', 
-        textColor: 'text-teal-900' 
-    },
-    'DC': { 
-        name: '电子包浆黄', 
-        state: '麻木刺痛态', 
-        desc: '见惯了自己把生活搞砸后的麻木。心里偶尔还会因为错过某些机会而微微刺痛一下，但身体已经产生电子包浆，完全不想起身去补救了。', 
-        do: '洗个极热的热水澡', 
-        dont: '深夜算账', 
-        bgClass: 'bg-[#fef08a]', 
-        textColor: 'text-yellow-900' 
-    },
-
-    // ==========================================
-    // 三、 隐藏款/异常状态 (SSR / UR)
-    // ==========================================
-    'SSR': { 
-        name: '薛定谔的五彩斑斓黑', 
-        state: '系统无法解析', 
-        desc: '四股力量在体内达到诡异平衡。既想毁灭世界又想拯救小猫，既想彻底摆烂又在疯狂内耗。极致的清醒与疯狂共存，常规色彩已无法定义你的光怪陆离。', 
-        do: '立刻拔掉网线', 
-        dont: '试图向人类解释你的脑回路', 
-        bgClass: 'bg-black', 
-        textColor: 'text-white', 
-        isSSR: true 
-    },
-    'SR': { 
-        name: '纯白出家色', 
-        state: '赛博木鱼态', 
-        desc: '你的摆烂值突破天际，其余皆空。已经超越了世俗烦恼，进入了敲多了电子木鱼后的赛博禅意状态。施主，这破班不上也罢，万物皆虚，万事皆允。', 
-        do: '去寺庙或者公园散步', 
-        dont: '和执念太深的人讲话', 
-        bgClass: 'bg-white', 
-        textColor: 'text-gray-300', 
-        style: 'border: 2px solid #f3f4f6;' 
-    },
-    'UR1': { 
-        name: '频闪警告黄黑条纹', 
-        state: '高危隔离区', 
-        desc: '极度精分。在“创飞所有人”和“绝对自闭不理人”之间以毫秒级速度切换。你现在是一个高度危险的精神放射源，靠近你的人非死即伤。', 
-        do: '独自去吃一顿最贵的', 
-        dont: '谈恋爱或相亲', 
-        style: 'background: repeating-linear-gradient(45deg, #eab308, #eab308 20px, #000000 20px, #000000 40px);', 
-        textColor: 'text-white' 
-    },
-    'UR2': { 
-        name: '马赛克乱码色', 
-        state: '逻辑彻底崩塌', 
-        desc: '你的选择充满了极端的自我矛盾，大脑已短路，拒绝提供连贯逻辑。精神状态如同被病毒入侵的显示器，建议立刻断电重启。', 
-        do: '强制自己闭眼睡觉', 
-        dont: '做任何人生重大决定', 
-        style: 'background: linear-gradient(to right, #9ca3af, #4b5563);', 
-        textColor: 'text-green-400',
-        isSSR: true // 复用故障特效
-    }
-};
         const fallbackResult = {
-            name: "马赛克乱码色",
-            state: "逻辑崩塌",
+            name: "马赛克乱码色", state: "逻辑崩塌",
             desc: "你的选择充满了矛盾，大脑已短路。精神状态如同被病毒入侵，建议立刻断电重启。",
-            do: "立刻睡觉",
-            dont: "做任何决定",
-            cardStyle: { background: "#1f2937", textColor: "#86efac" }
+            do: "立刻睡觉", dont: "做任何决定",
+            background: "#1f2937", textColor: "#86efac"
         };
 
         const questions = [
             {
                 text: "周日深夜，老板突然在群里艾特你问“进度如何”，你的第一反应是：",
                 options: [
-                    { label: "直接回一个大火的阴阳怪气表情包，主打同归于尽。", type: "A" },
+                    { label: "回个“你没事吧”的表情包，然后准备明天辞职。", type: "A" },
                     { label: "迅速退出微信并开启飞行模式，假装自己已失联。", type: "B" },
-                    { label: "反复打字又删除，脑补了80种理由，甚至想到了辞职。", type: "C" },
-                    { label: "已读，但心跳频率都没变：“反正今晚不干，明天再说”。", type: "D" }
+                    { label: "打字又删，纠结了半小时回了个“收到”，然后气得整晚失眠。", type: "C" },
+                    { label: "已读不回，反正今晚不干，明天再说。", type: "D" }
                 ]
             },
             {
                 text: "走在路上突然下暴雨，而你没带伞，此时你会：",
                 options: [
-                    { label: "干脆在雨里狂奔大叫，让路人觉得你精神不太正常。", type: "A" },
-                    { label: "以百米冲刺速度冲向最近的屋檐，把自己缩成一团。", type: "B" },
-                    { label: "一边淋雨一边想：“偏偏今天下雨？我最近运气真差。”", type: "C" },
-                    { label: "无所谓地走在雨里，觉得“湿透了挺好，不用躲了”。", type: "D" }
+                    { label: "变成热带雨林里的猴子，在雨里狂奔大叫，人不用活得太正常。", type: "A" },
+                    { label: "以百米冲刺速度冲向最近的屋檐，躲雨要紧。", type: "B" },
+                    { label: "陷入深深的自责：“为什么今天不看天气预报？我这糟糕又倒霉的人生。”", type: "C" },
+                    { label: "顺势在路边仰起头洗把脸，反正是免费的水，毁灭吧赶紧的。", type: "D" }
                 ]
             },
             {
-                text: "朋友圈发了一张精心修过的照片，半小时没人点赞，你会：",
+                text: "手机电量跌破 5% 且找不到充电器时，你的状态是：",
                 options: [
-                    { label: "评论一句“大家都在忙吗？那我也忙了”，拉黑全世界。", type: "A" },
-                    { label: "迅速把权限改为“仅自己可见”，假装这事儿没发生过。", type: "B" },
-                    { label: "逐像素检查照片，怀疑自己修得太假或者文案太矫情。", type: "C" },
-                    { label: "甚至忘了自己发过，发朋友圈只是为了给自己留存档。", type: "D" }
-                ]
-            },
-            {
-                text: "电梯里遇到一个不太熟、但必须打招呼的同事，你会：",
-                options: [
-                    { label: "主动发起高频社交攻击，聊到对方想报警逃离。", type: "A" },
-                    { label: "盯着电梯楼层数字，假装正在进行深度思考。", type: "B" },
-                    { label: "疯狂组织语言，出电梯后反思刚才的“早”是不是调门太高。", type: "C" },
-                    { label: "面无表情地点下头，多一个字都不想说。", type: "D" }
+                    { label: "暴躁地翻箱倒柜，甚至想把手里的废铁扔出窗外。", type: "A" },
+                    { label: "迅速切断所有社交网络和后台，只保留核心通讯，进入节能闭关模式。", type: "B" },
+                    { label: "开始焦虑如果有人找我怎么办？如果错过重要消息怎么办？", type: "C" },
+                    { label: "平静等待关机，长舒一口气：“终于可以不用面对这个世界了。”", type: "D" }
                 ]
             },
             {
                 text: "外卖送错了，给了一份你最讨厌的配菜，此时你：",
                 options: [
-                    { label: "必须找客服理论，甚至想写篇500字小作文控诉。", type: "A" },
+                    { label: "必须找客服对线，不仅要退款还要对方付出精神损失费。", type: "A" },
                     { label: "默默挑出来扔掉，并发誓再也不点这家店。", type: "B" },
-                    { label: "纠结要不要退款，怕麻烦又怕骑手找上门，气得吃不下。", type: "C" },
-                    { label: "就当是命运的盲盒，闭着眼咽下去，反正都是碳水。", type: "D" }
+                    { label: "纠结要不要退款，怕麻烦又怕骑手找上门，焦虑了半天也没吃。", type: "C" },
+                    { label: "不公平的命指使它来的，吃吧，真棒。", type: "D" }
                 ]
             },
             {
-                text: "深夜明明很想独处，但又发了一张没人看懂的emo图，心态是：",
+                text: "电梯里遇到一个不太熟、但必须打招呼的同事，你会：",
                 options: [
-                    { label: "如果有人不顺着我说话，我就顺着网线过去咬他。", type: "A" },
-                    { label: "发完立刻设为不可见，只是想排解一下发烫的脑机。", type: "B" },
-                    { label: "期待有人秒回，但又害怕别人真的来深度关心我。", type: "C" },
-                    { label: "不知道，手滑发的，懒得删了。", type: "D" }
+                    { label: "凑过去直勾勾地盯着对方强行社交，攻击是最好的防守。", type: "A" },
+                    { label: "盯着电梯楼层数字，假装正在进行深度思考。", type: "B" },
+                    { label: "尴尬得脚趾抠出三室一厅，开始反思自己刚才那个笑容是不是太谄媚了。", type: "C" },
+                    { label: "面无表情地点下头，多一个字都不想说。", type: "D" }
+                ]
+            },
+            {
+                text: "在一个你极其不想去的局上，大家正聊得热火朝天，你会：",
+                options: [
+                    { label: "突然站起来大喊：“给大家表演个后空翻吧”，搅乱局子然后趁乱离场。", type: "A" },
+                    { label: "借口去洗手间，然后在隔间里玩一个小时抓大鹅。", type: "B" },
+                    { label: "强颜欢笑附和，内心已经写了一万字的小作文痛批这种无效社交和虚伪的自己。", type: "C" },
+                    { label: "原地进入休眠模式，双眼失去高光，灵魂已经飘回了家里的床上。", type: "D" }
+                ]
+            },
+            {
+                text: "发了一组精心挑选的九宫格，半小时没人点赞，你会：",
+                options: [
+                    { label: "评论一句“大家都在忙吗？那我也忙了”。", type: "A" },
+                    { label: "转为“仅自己可见”，假装没发过。", type: "B" },
+                    { label: "假装不在意，但每隔三分钟刷新一次通知栏。", type: "C" },
+                    { label: "甚至忘了自己发过，朋友圈只是给自己留个存档。", type: "D" }
+                ]
+            },
+            {
+                text: "深夜明明很想独处，但又发了一张没人看懂的 emo 图，心态是：",
+                options: [
+                    { label: "如果有人敢在这张图下阴阳怪气，我就顺着网线过去咬他。", type: "A" },
+                    { label: "到点了，上头了，但发完立刻会删掉。", type: "B" },
+                    { label: "期待有人秒回，但如果真有人问，我又觉得好烦不想解释。", type: "C" },
+                    { label: "不知道，我的身材很曼妙。", type: "D" }
+                ]
+            },
+            {
+                text: "凌晨两点，毫无睡意的你盯着天花板，大脑正在：",
+                options: [
+                    { label: "突如其来的上进心，满脑子to do list，明天一定要大干一场。", type: "A" },
+                    { label: "规划一条完全不需要和碳基生物打交道的深山老林隐居路线。", type: "B" },
+                    { label: "循环播放三年前自己当众说错的一句话，羞愧得在床上疯狂打滚。", type: "C" },
+                    { label: "无悲无喜地数羊，感受宇宙的终极意义在羊群间穿梭。", type: "D" }
+                ]
+            },
+            {
+                text: "买了一件昂贵但心仪已久的无用之物（比如盲盒或手办），你的心态是：",
+                options: [
+                    { label: "消费主义的陷阱，太好了天上掉陷阱了。", type: "A" },
+                    { label: "这是对我近期忍受生活痛苦的“精神损失费”。", type: "B" },
+                    { label: "拆快递爽了一秒，紧随其后的是强烈的负罪感和对自己消费的极度恐慌。", type: "C" },
+                    { label: "钱没有消失，它只是变成了我死后可以一起陪葬的彩色塑料。", type: "D" }
+                ]
+            },
+            {
+                text: "有一项必须完成但极其繁琐的任务，你会怎么处理？",
+                options: [
+                    { label: "暴躁地一边狂拍桌子骂脏话，一边光速敲键盘泄愤式做完。", type: "A" },
+                    { label: "开始疯狂打扫房间、给花浇水，用干别的事情来建立绝对的逃避屏障。", type: "B" },
+                    { label: "在 Deadline 前焦虑得胃疼，但在最后一小时爆发出惊人的求生潜能。", type: "C" },
+                    { label: "假装这项任务不存在，坚信只要我不看它，灾难就不会降临。", type: "D" }
+                ]
+            },
+            {
+                text: "原本满档的周末突然被全部取消，多出两天空白时间，你会：",
+                options: [
+                    { label: "觉得待在家里亏大了，必须立刻出门花钱或者找人出去疯一把。", type: "A" },
+                    { label: "狂喜，立刻反锁房门，断掉 Wi-Fi，进入神仙难救的深度闭关模式。", type: "B" },
+                    { label: "开始焦虑：我是不是该看点书？该学点什么？不然这两天就废了。", type: "C" },
+                    { label: "躺在床上刷视频刷到晚上，然后感叹时间怎么过得这么快。", type: "D" }
+                ]
+            },
+            {
+                text: "周一早晨路过一只懒洋洋伸懒腰的野猫，你的心理活动是：",
+                options: [
+                    { label: "忮忌中，甚至想当场罢工，和它抢夺那个晒太阳的位置。", type: "A" },
+                    { label: "远远看着，觉得它这种完全不需要社交的边界感真是令人羡慕。", type: "B" },
+                    { label: "感叹自己连一只猫都不如，开始悲哀地反思人类文明和上班的意义。", type: "C" },
+                    { label: "眼神空洞地路过，其实根本没看见猫，心已经死在出门的那一刻了。", type: "D" }
+                ]
+            },
+            {
+                text: "如果你的房间可以自己说话，它对你生活氛围的评价会是：",
+                options: [
+                    { label: "军火库：乱七八糟，我没事就拿大炮轰自己。", type: "A" },
+                    { label: "抗战期间的堡垒天津站：极致的安全，连一只蚊子飞进来都要经过重重审查。", type: "B" },
+                    { label: "忧郁的废墟：这里堆满了我的情绪垃圾、未完成的计划和深深的叹息。", type: "C" },
+                    { label: "停尸房：每天回来只是为了把肉身停放进去几个小时。", type: "D" }
+                ]
+            },
+            {
+                text: "如果外星人真的降临地球，你觉得他们会对人类说什么：",
+                options: [
+                    { label: "“太糟糕了，毁灭吧”", type: "A" },
+                    { label: "“已把地球设为屏蔽模式，绕道飞行。”", type: "B" },
+                    { label: "“你们是怎么做到每天互相精神折磨还能活这么久的？”", type: "C" },
+                    { label: "“别卷了朋友们，整个宇宙都在草台班子化。”", type: "D" }
+                ]
+            },
+            {
+                text: "如果在平行宇宙里你不是人类，你最希望自己是：",
+                options: [
+                    { label: "一只会主动啄人的大鹅，平等地攻击路过的每个人。", type: "A" },
+                    { label: "一个埋在地底十米深、谁也挖不出来的梆梆硬石头。", type: "B" },
+                    { label: "一条在深海中可以自己发光且天天独自emo的丑鱼。", type: "C" },
+                    { label: "一团没有形状、随风飘散，连思考器官都没有的灰尘。", type: "D" }
+                ]
+            },
+            {
+                text: "极度烦躁或委屈时，你最有效的自我回血方式是：",
+                options: [
+                    { label: "在脑内对某人进行长达两小时的单方面逻辑辩论。", type: "A" },
+                    { label: "蒙上被子睡大觉，醒来强行清空缓存。", type: "B" },
+                    { label: "疯狂做机械重复的事情。", type: "C" },
+                    { label: "给路边的电线杆讲冷笑话。", type: "D" }
+                ]
+            },
+            {
+                text: "如果有个按钮能让你直接快进到五年后，你会：",
+                options: [
+                    { label: "疯狂按下，想看看到底有没有好起来。", type: "A" },
+                    { label: "犹豫再三，害怕五年后更糟。", type: "B" },
+                    { label: "绝对不按，虽然现在烂，但起码是我熟悉的烂。", type: "C" },
+                    { label: "把按钮拆了，看看是什么构造。", type: "D" }
+                ]
+            },
+            {
+                text: "支撑你熬过漫长又疲惫的一周的动力通常是：",
+                options: [
+                    { label: "刚下单还没发货的某样精神食粮。", type: "A" },
+                    { label: "周末能彻底切断社交信号睡到自然醒。", type: "B" },
+                    { label: "幻想有一天中彩票然后直接退休。", type: "C" },
+                    { label: "全靠一口吊着的仙气硬撑。", type: "D" }
                 ]
             }
         ];
@@ -1048,7 +1072,7 @@
                 return;
             }
 
-            if (top1[1] >= 4) {
+            if (top1[1] >= Math.ceil(questions.length * 0.4)) { // Adjust pure color threshold based on total questions
                 state.finalResultKey = top1[0];
                 return;
             }
@@ -1064,27 +1088,27 @@
             return resultDB[state.finalResultKey] || fallbackResult;
         }
 
-        function applyResultCardStyle(cardStyle, isSSR) {
+        function applyResultCardStyle(resultData, isSSR) {
             elements.resultCard.className = "result-card";
-            elements.resultCard.style.background = cardStyle.background || "#111111";
-            elements.resultCard.style.border = cardStyle.border || "0";
-            elements.resultCard.style.color = cardStyle.textColor || "#ffffff";
+            elements.resultCard.style.background = resultData.background || "#111111";
+            if (resultData.border) {
+                elements.resultCard.style.border = "4px solid " + resultData.border;
+            } else {
+                elements.resultCard.style.border = "0";
+            }
+            
+            const textColor = resultData.textColor || "#ffffff";
+            elements.resultName.style.color = textColor;
+            elements.resultState.style.color = textColor;
 
             if (isSSR) {
                 elements.resultCard.classList.add("glitch-bg");
             }
         }
 
-        function applyResultTextColor(color) {
-            elements.resultName.style.color = color;
-            elements.resultState.style.color = color;
-        }
-
         function renderResult() {
             const resultData = getResultData();
-            const cardStyle = resultData.cardStyle || fallbackResult.cardStyle;
-            applyResultCardStyle(cardStyle, Boolean(resultData.isSSR));
-            applyResultTextColor(cardStyle.textColor || "#ffffff");
+            applyResultCardStyle(resultData, Boolean(resultData.isSSR));
             elements.resultBadge.classList.toggle("visible", Boolean(resultData.isSSR));
             elements.resultName.textContent = resultData.name;
             elements.resultState.textContent = resultData.state;
@@ -1122,7 +1146,7 @@
         }
 
         function createGradient(ctx, fill, width, height) {
-            if (typeof fill !== "string" || !fill.startsWith("linear-gradient")) {
+            if (typeof fill !== "string" || (!fill.startsWith("linear-gradient") && !fill.startsWith("radial-gradient") && !fill.startsWith("repeating-linear-gradient"))) {
                 return fill;
             }
 
@@ -1190,7 +1214,6 @@
 
             try {
                 const resultData = getResultData();
-                const cardStyle = resultData.cardStyle || fallbackResult.cardStyle;
                 const canvas = document.createElement("canvas");
                 canvas.width = 1080;
                 canvas.height = 1600;
@@ -1206,8 +1229,8 @@
                 ctx.textAlign = "center";
                 ctx.fillText("YOUR TRUE COLOR", 540, 130);
 
-                const cardFill = createGradient(ctx, cardStyle.background, 840, 840);
-                drawRoundedRect(ctx, 120, 180, 840, 840, 46, cardFill, cardStyle.border ? "#e5e7eb" : null, cardStyle.border ? 8 : 0);
+                const cardFill = createGradient(ctx, resultData.background || "#111111", 840, 840);
+                drawRoundedRect(ctx, 120, 180, 840, 840, 46, cardFill, resultData.border ? resultData.border : null, resultData.border ? 8 : 0);
 
                 if (resultData.isSSR) {
                     ctx.save();
@@ -1225,7 +1248,7 @@
                     ctx.fillText("SSR 隐藏款", 790, 255);
                 }
 
-                ctx.fillStyle = cardStyle.textColor || "#ffffff";
+                ctx.fillStyle = resultData.textColor || "#ffffff";
                 ctx.textAlign = "left";
                 ctx.font = "900 76px Arial, sans-serif";
                 ctx.fillText(resultData.name, 170, 880);
