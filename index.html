@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>精神状态色彩测试</title>
+    <!-- 引入 Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- 引入 Vue 3 -->
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <!-- 引入 html2canvas 用于截图分享 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: #f3f4f6;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        /* 隐藏滚动条但允许滚动 */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        /* 选项悬浮动画 */
+        .option-card {
+            transition: all 0.2s ease;
+        }
+        .option-card:active {
+            transform: scale(0.98);
+        }
+
+        /* 故障风特效 (SSR 五彩斑斓的黑专属) */
+        .glitch-bg {
+            background: #000;
+            position: relative;
+            overflow: hidden;
+        }
+        .glitch-bg::before, .glitch-bg::after {
+            content: "";
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: repeating-linear-gradient(
+                45deg,
+                transparent,
+                transparent 10px,
+                rgba(255, 0, 255, 0.2) 10px,
+                rgba(255, 0, 255, 0.2) 20px
+            );
+            mix-blend-mode: color-dodge;
+            animation: glitch-anim 0.3s infinite alternate-reverse;
+            pointer-events: none;
+        }
+        .glitch-bg::after {
+            background: repeating-linear-gradient(
+                -45deg,
+                transparent,
+                transparent 15px,
+                rgba(0, 255, 255, 0.2) 15px,
+                rgba(0, 255, 255, 0.2) 30px
+            );
+            animation: glitch-anim-2 0.4s infinite alternate;
+        }
+
+        @keyframes glitch-anim {
+            0% { transform: translate(2px, 2px); opacity: 0.8; }
+            100% { transform: translate(-2px, -2px); opacity: 0.5; }
+        }
+        @keyframes glitch-anim-2 {
+            0% { transform: translate(-3px, 1px); opacity: 0.6; }
+            100% { transform: translate(3px, -1px); opacity: 0.9; }
+        }
+
+        /* 吐司提示框动画 */
+        .toast-enter-active, .toast-leave-active {
+            transition: all 0.3s ease;
+        }
+        .toast-enter-from, .toast-leave-to {
+            opacity: 0;
+            transform: translateY(20px) translateX(-50%);
+        }
+    </style>
+</head>
+<body class="text-gray-800 antialiased min-h-screen flex items-center justify-center">
+
+<div id="app" class="w-full max-w-md bg-white min-h-screen sm:min-h-[800px] sm:h-auto sm:rounded-3xl sm:shadow-2xl relative overflow-hidden flex flex-col">
+    
+    <!-- 状态 0：首页 -->
+    <div v-if="appState === 0" class="flex-1 flex flex-col items-center justify-center p-8 text-center bg-gradient-to-br from-gray-50 to-gray-200">
+        <div class="w-24 h-24 mb-6 rounded-full bg-gradient-to-tr from-pink-500 via-purple-500 to-indigo-500 shadow-lg animate-pulse"></div>
+        <h1 class="text-3xl font-black mb-2 tracking-tight">精神状态色彩测试</h1>
+        <p class="text-gray-500 mb-10 text-sm">测一测你这具皮囊下，藏着什么颜色的疯批灵魂。</p>
+        <button @click="startTest" class="w-full py-4 bg-black text-white rounded-2xl font-bold text-lg shadow-[0_8px_0_rgb(0,0,0,0.2)] active:shadow-[0_0px_0_rgb(0,0,0,0.2)] active:translate-y-2 transition-all">
+            开始心智扫描
+        </button>
+    </div>
+
+    <!-- 状态 1：答题页 -->
+    <div v-if="appState === 1" class="flex-1 flex flex-col p-6">
+        <!-- 进度条 -->
+        <div class="mb-8 mt-4">
+            <div class="flex justify-between text-xs text-gray-400 font-bold mb-2">
+                <span>SCANNED</span>
+                <span>{{ currentQIndex + 1 }} / {{ questions.length }}</span>
+            </div>
+            <div class="w-full bg-gray-100 rounded-full h-2">
+                <div class="bg-black h-2 rounded-full transition-all duration-300 ease-out" :style="{ width: progressPercent + '%' }"></div>
+            </div>
+        </div>
+
+        <!-- 题目 -->
+        <div class="flex-1">
+            <h2 class="text-xl font-bold leading-relaxed mb-8">{{ currentQuestion.text }}</h2>
+            
+            <div class="space-y-4">
+                <button 
+                    v-for="(opt, index) in shuffledOptions" 
+                    :key="index"
+                    @click="selectOption(opt.type)"
+                    class="option-card w-full text-left p-4 rounded-2xl border-2 border-gray-100 bg-white hover:border-gray-900 focus:border-black shadow-sm"
+                >
+                    <span class="block font-medium text-gray-700">{{ opt.label }}</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 状态 2：解析加载页 -->
+    <div v-if="appState === 2" class="flex-1 flex flex-col items-center justify-center p-8 bg-black text-white">
+        <div class="animate-spin w-12 h-12 border-4 border-gray-600 border-t-white rounded-full mb-6"></div>
+        <h2 class="text-xl font-bold mb-2">正在解析潜意识底色...</h2>
+        <p class="text-gray-400 text-sm font-mono">{{ loadingText }}</p>
+    </div>
+
+    <!-- 状态 3：结果色卡页 -->
+    <div v-show="appState === 3" class="flex-1 flex flex-col bg-gray-100 no-scrollbar overflow-y-auto">
+        
+        <!-- 截图区域 -->
+        <div id="capture-area" class="bg-white p-6 pb-8" style="min-height: max-content;">
+            <div class="text-center mb-6 pt-4">
+                <p class="text-xs font-bold text-gray-400 tracking-widest uppercase">Your True Color</p>
+            </div>
+            
+            <!-- 色块区 -->
+            <div 
+                class="w-full aspect-square rounded-3xl mb-6 shadow-inner flex flex-col justify-end p-6 relative overflow-hidden"
+                :class="[resultData.bgClass, { 'glitch-bg': resultData.isSSR }]"
+                :style="resultData.style"
+            >
+                <!-- SSR 标签 -->
+                <div v-if="resultData.isSSR" class="absolute top-4 right-4 bg-white/20 backdrop-blur-md px-3 py-1 rounded-full text-white text-xs font-black border border-white/30">
+                    SSR 隐藏款
+                </div>
+                
+                <h1 class="text-4xl font-black mb-1 drop-shadow-md" :class="resultData.textColor">{{ resultData.name }}</h1>
+                <p class="text-lg font-medium opacity-90 drop-shadow-md" :class="resultData.textColor">{{ resultData.state }}</p>
+            </div>
+
+            <!-- 解释区 -->
+            <div class="space-y-4">
+                <div class="bg-gray-50 p-4 rounded-2xl border border-gray-100">
+                    <p class="text-sm text-gray-600 leading-relaxed"><span class="font-bold text-black mr-2">临床表现:</span>{{ resultData.desc }}</p>
+                </div>
+                
+                <div class="flex space-x-3">
+                    <div class="flex-1 bg-green-50/50 p-3 rounded-2xl border border-green-100">
+                        <p class="text-xs font-bold text-green-700 mb-1">宜</p>
+                        <p class="text-xs text-gray-600">{{ resultData.do }}</p>
+                    </div>
+                    <div class="flex-1 bg-red-50/50 p-3 rounded-2xl border border-red-100">
+                        <p class="text-xs font-bold text-red-700 mb-1">忌</p>
+                        <p class="text-xs text-gray-600">{{ resultData.dont }}</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 底部标识 -->
+            <div class="mt-8 pt-4 border-t border-gray-100 flex justify-between items-center opacity-50">
+                <span class="text-[10px] font-mono">MENTAL COLOR TEST</span>
+                <span class="text-[10px] font-mono">SCAN TO TEST ➔</span>
+            </div>
+        </div>
+
+        <!-- 操作按钮区 (不截图) -->
+        <div class="p-6 bg-white sticky bottom-0 border-t border-gray-100 shadow-[0_-10px_20px_rgba(0,0,0,0.02)]">
+            <button @click="saveImage" class="w-full py-4 bg-black text-white rounded-2xl font-bold text-base mb-3 flex justify-center items-center">
+                <svg v-if="!isSaving" class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                <div v-else class="animate-spin w-5 h-5 border-2 border-white border-t-transparent rounded-full mr-2"></div>
+                {{ isSaving ? '生成色卡中...' : '保存专属色卡' }}
+            </button>
+            <button @click="resetTest" class="w-full py-3 bg-gray-100 text-gray-600 rounded-2xl font-medium text-sm">
+                重新测试
+            </button>
+        </div>
+    </div>
+
+    <!-- 自定义 Toast 提示 -->
+    <transition name="toast">
+        <div v-if="toastMsg" class="absolute bottom-24 left-1/2 transform -translate-x-1/2 bg-black/80 text-white px-6 py-3 rounded-full text-sm font-medium backdrop-blur-sm z-50 whitespace-nowrap">
+            {{ toastMsg }}
+        </div>
+    </transition>
+
+</div>
+
+<script>
+const { createApp, ref, computed, watch } = Vue;
+
+// 洗牌算法函数 (Fisher-Yates)
+const shuffleArray = (array) => {
+    const newArray = [...array];
+    for (let i = newArray.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+    }
+    return newArray;
+};
+
+// 完整的图鉴数据库
+const resultDB = {
+    // 单极主导
+    'A': { name: '警告荧光红', state: '随时爆炸态', desc: '你的忍耐度已欠费，现在全靠一口怒气在给身体供电。平等地创飞地球上的每一个人。', do: '听重金属摇滚', dont: '回复工作群', bgClass: 'bg-[#ff003c]', textColor: 'text-white' },
+    'B': { name: '防窥膜黑', state: '绝对隔离态', desc: '极致的物理与精神双重屏蔽。结界太厚了，别说别人走不进你的心，你自己有时候都找不到门。', do: '拉黑讨厌的人', dont: '强行聚餐', bgClass: 'bg-[#1a1a1a]', textColor: 'text-white' },
+    'C': { name: '沉迷内耗紫', state: '脑内小剧场', desc: '紫气东来全是愁。表面波澜不惊，脑内已经演完了一部八十集的家庭伦理谍战大戏。', do: '发仅自己可见的朋友圈', dont: '睡前复盘今天', bgClass: 'bg-[#6b21a8]', textColor: 'text-white' },
+    'D': { name: '掉线水泥灰', state: '超然摆烂态', desc: '彻底与世界和解（放弃挣扎）。世界是个大草台班子，而你连个马扎都不想搬，只想躺下。', do: '无目的地发呆', dont: '做五年规划', bgClass: 'bg-[#9ca3af]', textColor: 'text-gray-900' },
+    
+    // 双轨交错
+    'AC': { name: '高压锅蒸汽白', state: '沸腾边缘态', desc: '看着纯洁无害还在冒气，其实内耗已经达到沸点，只要谁敢碰一下盖子，马上炸开创飞所有人。', do: '做剧烈运动', dont: '憋着不说话', bgClass: 'bg-white border-4 border-gray-200', textColor: 'text-gray-900' },
+    'CA': { name: '毒蘑菇斑斓紫', state: '阴阳怪气态', desc: '脑内剧场极其丰富且带毒，想得太多导致精神异变，一开口就是让人无法反驳的高级嘲讽。', do: '写吐槽日记', dont: '假装大度', style: 'background: linear-gradient(135deg, #7c3aed, #ec4899);', textColor: 'text-white' },
+    'AD': { name: '脆皮香蕉黄', state: '光速放弃态', desc: '叫唤得比谁都响，放弃得比谁都快。前一秒“我要毁灭世界”，后一秒“算了太累了点个外卖吧”。', do: '吃点甜的', dont: '立Flag', bgClass: 'bg-[#facc15]', textColor: 'text-gray-900' },
+    'BC': { name: '深海幽灵蓝', state: '抑郁水鬼态', desc: '极度社恐。把自己沉在几万米深的海底，在无人知晓的暗处默默反思今天说错的半句话。', do: '戴降噪耳机', dont: '去人多的地方', bgClass: 'bg-[#1e3a8a]', textColor: 'text-white' },
+    'BD': { name: '隐形玻璃色', state: '赛博透明人', desc: '极致的透明人心态。不想防御谁，也不想攻击谁，只想化作一阵风在这个世界上毫无痕迹地混日子。', do: '潜水潜水潜水', dont: '当出头鸟', style: 'background: linear-gradient(135deg, #f3f4f6, #e5e7eb);', textColor: 'text-gray-400' },
+    
+    // 隐藏 SSR
+    'SSR': { name: '五彩斑斓的黑', state: '薛定谔的稳定', desc: '四股力量在体内达到诡异平衡。既想毁灭世界又想拯救小猫，既想摆烂又在疯狂内耗。常规色彩已无法定义你。', do: '拔掉网线', dont: '向外界解释自己', bgClass: 'bg-black', textColor: 'text-white', isSSR: true },
+};
+
+// 兜底色卡
+const fallbackResult = { name: '马赛克乱码色', state: '逻辑崩塌', desc: '你的选择充满了矛盾，大脑已短路。精神状态如同被病毒入侵，建议立刻断电重启。', do: '立刻睡觉', dont: '做任何决定', bgClass: 'bg-gray-800', textColor: 'text-green-400' };
+
+createApp({
+    setup() {
+        const appState = ref(0); // 0:首页, 1:答题, 2:加载, 3:结果
+        const currentQIndex = ref(0);
+        const scores = ref({ A: 0, B: 0, C: 0, D: 0 });
+        const finalResultKey = ref('');
+        const loadingText = ref('Extracting...');
+        const isSaving = ref(false);
+        const toastMsg = ref('');
+        const shuffledOptions = ref([]); // 用于存储当前打乱后的选项
+        let toastTimer = null;
+
+        const questions = [
+            {
+                text: "周日深夜，老板突然在群里艾特你问“进度如何”，你的第一反应是：",
+                options: [
+                    { label: "直接回一个大火的阴阳怪气表情包，主打同归于尽。", type: 'A' },
+                    { label: "迅速退出微信并开启飞行模式，假装自己已失联。", type: 'B' },
+                    { label: "反复打字又删除，脑补了80种理由，甚至想到了辞职。", type: 'C' },
+                    { label: "已读，但心跳频率都没变：“反正今晚不干，明天再说”。", type: 'D' }
+                ]
+            },
+            {
+                text: "走在路上突然下暴雨，而你没带伞，此时你会：",
+                options: [
+                    { label: "干脆在雨里狂奔大叫，让路人觉得你精神不太正常。", type: 'A' },
+                    { label: "以百米冲刺速度冲向最近的屋檐，把自己缩成一团。", type: 'B' },
+                    { label: "一边淋雨一边想：“偏偏今天下雨？我最近运气真差。”", type: 'C' },
+                    { label: "无所谓地走在雨里，觉得“湿透了挺好，不用躲了”。", type: 'D' }
+                ]
+            },
+            {
+                text: "朋友圈发了一张精心修过的照片，半小时没人点赞，你会：",
+                options: [
+                    { label: "评论一句“大家都在忙吗？那我也忙了”，拉黑全世界。", type: 'A' },
+                    { label: "迅速把权限改为“仅自己可见”，假装这事儿没发生过。", type: 'B' },
+                    { label: "逐像素检查照片，怀疑自己修得太假或者文案太矫情。", type: 'C' },
+                    { label: "甚至忘了自己发过，发朋友圈只是为了给自己留存档。", type: 'D' }
+                ]
+            },
+            {
+                text: "电梯里遇到一个不太熟、但必须打招呼的同事，你会：",
+                options: [
+                    { label: "主动发起高频社交攻击，聊到对方想报警逃离。", type: 'A' },
+                    { label: "盯着电梯楼层数字，假装正在进行深度思考。", type: 'B' },
+                    { label: "疯狂组织语言，出电梯后反思刚才的“早”是不是调门太高。", type: 'C' },
+                    { label: "面无表情地点下头，多一个字都不想说。", type: 'D' }
+                ]
+            },
+            {
+                text: "外卖送错了，给了一份你最讨厌的配菜，此时你：",
+                options: [
+                    { label: "必须找客服理论，甚至想写篇500字小作文控诉。", type: 'A' },
+                    { label: "默默挑出来扔掉，并发誓再也不点这家店。", type: 'B' },
+                    { label: "纠结要不要退款，怕麻烦又怕骑手找上门，气得吃不下。", type: 'C' },
+                    { label: "就当是命运的盲盒，闭着眼咽下去，反正都是碳水。", type: 'D' }
+                ]
+            },
+            {
+                text: "深夜明明很想独处，但又发了一张没人看懂的emo图，心态是：",
+                options: [
+                    { label: "如果有人不顺着我说话，我就顺着网线过去咬他。", type: 'A' },
+                    { label: "发完立刻设为不可见，只是想排解一下发烫的脑机。", type: 'B' },
+                    { label: "期待有人秒回，但又害怕别人真的来深度关心我。", type: 'C' },
+                    { label: "不知道，手滑发的，懒得删了。", type: 'D' }
+                ]
+            }
+        ];
+
+        const currentQuestion = computed(() => questions[currentQIndex.value]);
+        const progressPercent = computed(() => (currentQIndex.value / questions.length) * 100);
+        const resultData = computed(() => resultDB[finalResultKey.value] || fallbackResult);
+
+        // 监听题目索引变化，每次切题时重新打乱选项
+        watch(currentQIndex, () => {
+            if (currentQuestion.value && currentQuestion.value.options) {
+                shuffledOptions.value = shuffleArray(currentQuestion.value.options);
+            }
+        }, { immediate: true });
+
+        const showToast = (msg) => {
+            toastMsg.value = msg;
+            if(toastTimer) clearTimeout(toastTimer);
+            toastTimer = setTimeout(() => toastMsg.value = '', 2500);
+        };
+
+        const startTest = () => {
+            appState.value = 1;
+            currentQIndex.value = 0;
+            scores.value = { A: 0, B: 0, C: 0, D: 0 };
+            // 开始测试时立即打乱第一题的选项
+            shuffledOptions.value = shuffleArray(questions[0].options);
+        };
+
+        const selectOption = (type) => {
+            scores.value[type]++;
+            if (currentQIndex.value < questions.length - 1) {
+                currentQIndex.value++;
+            } else {
+                calculateResult();
+            }
+        };
+
+        const calculateResult = () => {
+            appState.value = 2; // 进入加载态
+            
+            // 模拟打字机加载效果
+            let texts = ['Loading Void...', 'Bypassing Shield...', 'Analyzing Chaos...', 'Done.'];
+            let tIdx = 0;
+            let timer = setInterval(() => {
+                loadingText.value = texts[tIdx++];
+                if(tIdx >= texts.length) {
+                    clearInterval(timer);
+                    determineColor();
+                    setTimeout(() => appState.value = 3, 500); // 切换到结果页
+                }
+            }, 600);
+        };
+
+        const determineColor = () => {
+            const s = scores.value;
+            // 转换为数组并排序: [['A', 2], ['C', 1], ...]
+            const sorted = Object.entries(s).sort((a, b) => b[1] - a[1]);
+            const top1 = sorted[0];
+            const top2 = sorted[1];
+            const bottom = sorted[3];
+
+            // 1. SSR 判定: 所有分数极度平均 (最大值和最小值差 <= 1)
+            if (top1[1] - bottom[1] <= 1) {
+                finalResultKey.value = 'SSR';
+                return;
+            }
+
+            // 2. 纯色判定: 某一项得分压倒性 (≥ 4分，总题数6题)
+            if (top1[1] >= 4) {
+                finalResultKey.value = top1[0];
+                return;
+            }
+
+            // 3. 复合色判定: 取 Top1 和 Top2
+            let key = top1[0] + top2[0];
+            // 如果图鉴里没有具体的顺位组合，尝试反转（比如没有 CA 就用 AC）
+            if (!resultDB[key] && resultDB[top2[0] + top1[0]]) {
+                key = top2[0] + top1[0];
+            }
+            finalResultKey.value = key;
+        };
+
+        const saveImage = async () => {
+            if (isSaving.value) return;
+            isSaving.value = true;
+            try {
+                const element = document.getElementById('capture-area');
+                // 使用 html2canvas 生成图片 (scale: 2 保证清晰度)
+                const canvas = await html2canvas(element, {
+                    scale: 2,
+                    useCORS: true,
+                    backgroundColor: '#ffffff'
+                });
+                
+                // 转换为图片并下载
+                const image = canvas.toDataURL("image/png");
+                const link = document.createElement('a');
+                link.download = `精神色卡-${resultData.value.name}.png`;
+                link.href = image;
+                link.click();
+                showToast('✨ 色卡生成成功，快去分享吧！');
+            } catch (err) {
+                console.error("生成截图失败", err);
+                showToast('😅 截图失败了，可能是宇宙磁场干扰');
+            } finally {
+                isSaving.value = false;
+            }
+        };
+
+        const resetTest = () => {
+            appState.value = 0;
+        };
+
+        return {
+            appState, questions, currentQIndex, currentQuestion, progressPercent,
+            startTest, selectOption, loadingText, resultData, saveImage, isSaving,
+            resetTest, toastMsg, shuffledOptions
+        };
+    }
+}).mount('#app');
+</script>
+</body>
+</html>
