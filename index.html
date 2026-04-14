@@ -667,18 +667,207 @@
 
     <script>
         const resultDB = {
-            A: { name: "警告荧光红", state: "随时爆炸态", desc: "你的忍耐度已欠费，现在全靠一口怒气在给身体供电。平等地创飞地球上的每一个人。", do: "听重金属摇滚", dont: "回复工作群", cardStyle: { background: "#ff003c", textColor: "#ffffff" } },
-            B: { name: "防窥膜黑", state: "绝对隔离态", desc: "极致的物理与精神双重屏蔽。结界太厚了，别说别人走不进你的心，你自己有时候都找不到门。", do: "拉黑讨厌的人", dont: "强行聚餐", cardStyle: { background: "#1a1a1a", textColor: "#ffffff" } },
-            C: { name: "沉迷内耗紫", state: "脑内小剧场", desc: "紫气东来全是愁。表面波澜不惊，脑内已经演完了一部八十集的家庭伦理谍战大戏。", do: "发仅自己可见的朋友圈", dont: "睡前复盘今天", cardStyle: { background: "#6b21a8", textColor: "#ffffff" } },
-            D: { name: "掉线水泥灰", state: "超然摆烂态", desc: "彻底与世界和解（放弃挣扎）。世界是个大草台班子，而你连个马扎都不想搬，只想躺下。", do: "无目的地发呆", dont: "做五年规划", cardStyle: { background: "#9ca3af", textColor: "#111827" } },
-            AC: { name: "高压锅蒸汽白", state: "沸腾边缘态", desc: "看着纯洁无害还在冒气，其实内耗已经达到沸点，只要谁敢碰一下盖子，马上炸开创飞所有人。", do: "做剧烈运动", dont: "憋着不说话", cardStyle: { background: "#ffffff", textColor: "#111827", border: "4px solid #e5e7eb" } },
-            CA: { name: "毒蘑菇斑斓紫", state: "阴阳怪气态", desc: "脑内剧场极其丰富且带毒，想得太多导致精神异变，一开口就是让人无法反驳的高级嘲讽。", do: "写吐槽日记", dont: "假装大度", cardStyle: { background: "linear-gradient(135deg, #7c3aed, #ec4899)", textColor: "#ffffff" } },
-            AD: { name: "脆皮香蕉黄", state: "光速放弃态", desc: "叫唤得比谁都响，放弃得比谁都快。前一秒“我要毁灭世界”，后一秒“算了太累了点个外卖吧”。", do: "吃点甜的", dont: "立Flag", cardStyle: { background: "#facc15", textColor: "#111827" } },
-            BC: { name: "深海幽灵蓝", state: "抑郁水鬼态", desc: "极度社恐。把自己沉在几万米深的海底，在无人知晓的暗处默默反思今天说错的半句话。", do: "戴降噪耳机", dont: "去人多的地方", cardStyle: { background: "#1e3a8a", textColor: "#ffffff" } },
-            BD: { name: "隐形玻璃色", state: "赛博透明人", desc: "极致的透明人心态。不想防御谁，也不想攻击谁，只想化作一阵风在这个世界上毫无痕迹地混日子。", do: "潜水潜水潜水", dont: "当出头鸟", cardStyle: { background: "linear-gradient(135deg, #f3f4f6, #e5e7eb)", textColor: "#9ca3af" } },
-            SSR: { name: "五彩斑斓的黑", state: "薛定谔的稳定", desc: "四股力量在体内达到诡异平衡。既想毁灭世界又想拯救小猫，既想摆烂又在疯狂内耗。常规色彩已无法定义你。", do: "拔掉网线", dont: "向外界解释自己", cardStyle: { background: "#000000", textColor: "#ffffff" }, isSSR: true }
-        };
+    // ==========================================
+    // 一、 单极主导态 (绝对的纯粹)
+    // ==========================================
+    'A': { 
+        name: '警告荧光红', 
+        state: '随时爆炸态', 
+        desc: '你的忍耐额度早已透支，现在全靠一口怒气给身体供电。像一颗拔了引信的闪光雷，随时准备创飞地球上的每一个人。与其精神内耗自己，不如发疯外耗别人。', 
+        do: '物理破坏废弃物品', 
+        dont: '回复工作群消息', 
+        bgClass: 'bg-[#ff003c]', 
+        textColor: 'text-white' 
+    },
+    'B': { 
+        name: '防窥膜黑', 
+        state: '绝对隔离态', 
+        desc: '拥有极致的物理与精神双重屏蔽机制。你不仅给手机贴了防窥膜，还给灵魂焊了防盗门。结界太厚，别人进不来，有时候你自己想出来透气都找不到门。', 
+        do: '无限期拉黑讨厌的人', 
+        dont: '参加强行热络的团建', 
+        bgClass: 'bg-[#1a1a1a]', 
+        textColor: 'text-white' 
+    },
+    'C': { 
+        name: '沉迷内耗紫', 
+        state: '脑内小剧场', 
+        desc: '紫气东来全是愁。别人的一句“哦”能在你脑子里掀起海啸。表面波澜不惊，其实脑内已经演完八十集谍战剧。精力全被自己的反刍抽干了。', 
+        do: '把手机静音扔进抽屉', 
+        dont: '睡前复盘今天说错的话', 
+        bgClass: 'bg-[#6b21a8]', 
+        textColor: 'text-white' 
+    },
+    'D': { 
+        name: '掉线水泥灰', 
+        state: '超然摆烂态', 
+        desc: '彻底与世界达成了黑色幽默般的和解（放弃挣扎）。世界是个草台班子，而你连马扎都不想搬，只想躺在台下。连焦虑都懒得焦虑，主打“我就烂”。', 
+        do: '毫无目的地盯着天花板', 
+        dont: '做详尽的五年职业规划', 
+        bgClass: 'bg-[#9ca3af]', 
+        textColor: 'text-gray-900' 
+    },
 
+    // ==========================================
+    // 二、 双轨交错态 (当代人复杂的日常)
+    // ==========================================
+    
+    // 【发疯 A 相关】
+    'AB': { 
+        name: '赛博朋克霓虹', 
+        state: '带刺铁丝网', 
+        desc: '带着极强的攻击性，但又有一层冰冷的边界感。你就像赛博朋克里的霓虹灯，刺眼且极具警告意味，谁敢越过你的安全距离，立刻执行言语爆破。', 
+        do: '看一部暴力美学电影', 
+        dont: '对陌生人展露善意', 
+        style: 'background: linear-gradient(135deg, #ff00ff, #00ffff);', 
+        textColor: 'text-black' 
+    },
+    'BA': { 
+        name: '哑光暗杀黑', 
+        state: '静默狙击手', 
+        desc: '平时冷酷自闭、绝对隐形，把所有的愤怒都压缩在极致的防御外壳下。不叫的狗最咬人，一旦有人试图撕开你的防御，你会直接让对方下不来台。', 
+        do: '练习冷笑', 
+        dont: '在群里活跃气氛', 
+        style: 'background: linear-gradient(135deg, #2d2d2d, #8b0000);', 
+        textColor: 'text-white' 
+    },
+    'AC': { 
+        name: '高压锅蒸汽白', 
+        state: '沸腾边缘态', 
+        desc: '看着纯洁无害还在冒气，其实内耗已经达到物理沸点。理智在死死压抑着掀桌子的冲动，只要谁现在敢碰一下盖子，你马上炸开，把厨房夷为平地。', 
+        do: '找个空旷的地方大叫', 
+        dont: '继续憋着装老好人', 
+        style: 'background: radial-gradient(circle, #ffffff, #fee2e2); border: 4px solid #f87171;', 
+        textColor: 'text-gray-900' 
+    },
+    'CA': { 
+        name: '毒蘑菇斑斓紫', 
+        state: '阴阳怪气态', 
+        desc: '脑内剧场极其丰富且带毒，想得太多导致精神异变。你不再自我攻击，而是把内耗转化为毒汁，一开口就是让人无法反驳的高级嘲讽。', 
+        do: '写段子吐槽生活', 
+        dont: '劝自己大度一点', 
+        style: 'background: linear-gradient(135deg, #7c3aed, #ec4899);', 
+        textColor: 'text-white' 
+    },
+    'AD': { 
+        name: '脆皮香蕉黄', 
+        state: '光速放弃态', 
+        desc: '网络上的巨人，现实中的脆皮。叫唤得比谁都响亮，放弃得比谁都果断。前一秒“我要毁灭世界”，后一秒“算了太累了，先点个外卖吧”。', 
+        do: '吃点高热量甜食', 
+        dont: '立长期的 Flag', 
+        bgClass: 'bg-[#facc15]', 
+        textColor: 'text-gray-900' 
+    },
+    'DA': { 
+        name: '薛定谔的鸡血红', 
+        state: '仰卧起坐态', 
+        desc: '你的摆烂和热血处于高频交替中。躺在床上、盖着被子，却激情四射地在脑内规划如何整顿职场，然后翻个身继续睡。间歇性踌躇满志，持续性混吃等死。', 
+        do: '把脑洞写进备忘录', 
+        dont: '立刻花钱报班学习', 
+        style: 'background: linear-gradient(135deg, #fda4af, #e11d48);', 
+        textColor: 'text-white' 
+    },
+
+    // 【防御 B 与其他组合】
+    'BC': { 
+        name: '深海幽灵蓝', 
+        state: '抑郁水鬼态', 
+        desc: '极度的社恐患者。选择把自己沉在几万米深、无光的海底。不希望任何人找到你，但在无人知晓的暗处，依然在默默为今天说错的半句话流泪。', 
+        do: '戴最高级别的降噪耳机', 
+        dont: '去人多嘈杂的网红店打卡', 
+        bgClass: 'bg-[#1e3a8a]', 
+        textColor: 'text-white' 
+    },
+    'CB': { 
+        name: '褪色老相片黄', 
+        state: '怀旧避难所', 
+        desc: '用一层厚厚的怀旧滤镜把自己包裹起来。沉浸在对过去遗憾的反刍里，以此来防御对现实社交和未来的恐惧。你活在昨天，因为明天太可怕。', 
+        do: '整理旧物或老照片', 
+        dont: '强迫自己开展新社交', 
+        bgClass: 'bg-[#d6d3d1]', 
+        textColor: 'text-gray-800' 
+    },
+    'BD': { 
+        name: '隐形玻璃色', 
+        state: '赛博透明人', 
+        desc: '极致的透明人心态。不想防御谁，也不想攻击谁，只想化作一阵风，在这个世界上毫无痕迹、毫无波澜地混日子，请大家当我不存在。', 
+        do: '开启全网隐身状态', 
+        dont: '做任何引人注目的事', 
+        style: 'background: linear-gradient(135deg, #f3f4f6, #e5e7eb);', 
+        textColor: 'text-gray-400' 
+    },
+    'DB': { 
+        name: '融化柏油黑', 
+        state: '硬壳烂泥态', 
+        desc: '烂泥扶不上墙，并且你还用一层厚厚的黑色硬壳把这滩烂泥包起来了。拒绝外界的任何鸡汤，以极其稳固的姿态瘫在原地，任人踩踏也不想动弹。', 
+        do: '在黑暗的房间里躺平', 
+        dont: '看励志演讲', 
+        bgClass: 'bg-[#3f3f46]', 
+        textColor: 'text-gray-300' 
+    },
+
+    // 【内耗 C 与 摆烂 D】
+    'CD': { 
+        name: '过期薄荷绿', 
+        state: '清醒堕落态', 
+        desc: '一边为未来焦虑得胃疼、整夜失眠，一边又躺在床上狂刷短视频停不下来。充满了清醒的腐朽感，你知道这样不对，但你就是改不了。', 
+        do: '立刻断网五分钟', 
+        dont: '看同龄人的成功故事', 
+        bgClass: 'bg-[#6ee7b7]', 
+        textColor: 'text-teal-900' 
+    },
+    'DC': { 
+        name: '电子包浆黄', 
+        state: '麻木刺痛态', 
+        desc: '见惯了自己把生活搞砸后的麻木。心里偶尔还会因为错过某些机会而微微刺痛一下，但身体已经产生电子包浆，完全不想起身去补救了。', 
+        do: '洗个极热的热水澡', 
+        dont: '深夜算账', 
+        bgClass: 'bg-[#fef08a]', 
+        textColor: 'text-yellow-900' 
+    },
+
+    // ==========================================
+    // 三、 隐藏款/异常状态 (SSR / UR)
+    // ==========================================
+    'SSR': { 
+        name: '薛定谔的五彩斑斓黑', 
+        state: '系统无法解析', 
+        desc: '四股力量在体内达到诡异平衡。既想毁灭世界又想拯救小猫，既想彻底摆烂又在疯狂内耗。极致的清醒与疯狂共存，常规色彩已无法定义你的光怪陆离。', 
+        do: '立刻拔掉网线', 
+        dont: '试图向人类解释你的脑回路', 
+        bgClass: 'bg-black', 
+        textColor: 'text-white', 
+        isSSR: true 
+    },
+    'SR': { 
+        name: '纯白出家色', 
+        state: '赛博木鱼态', 
+        desc: '你的摆烂值突破天际，其余皆空。已经超越了世俗烦恼，进入了敲多了电子木鱼后的赛博禅意状态。施主，这破班不上也罢，万物皆虚，万事皆允。', 
+        do: '去寺庙或者公园散步', 
+        dont: '和执念太深的人讲话', 
+        bgClass: 'bg-white', 
+        textColor: 'text-gray-300', 
+        style: 'border: 2px solid #f3f4f6;' 
+    },
+    'UR1': { 
+        name: '频闪警告黄黑条纹', 
+        state: '高危隔离区', 
+        desc: '极度精分。在“创飞所有人”和“绝对自闭不理人”之间以毫秒级速度切换。你现在是一个高度危险的精神放射源，靠近你的人非死即伤。', 
+        do: '独自去吃一顿最贵的', 
+        dont: '谈恋爱或相亲', 
+        style: 'background: repeating-linear-gradient(45deg, #eab308, #eab308 20px, #000000 20px, #000000 40px);', 
+        textColor: 'text-white' 
+    },
+    'UR2': { 
+        name: '马赛克乱码色', 
+        state: '逻辑彻底崩塌', 
+        desc: '你的选择充满了极端的自我矛盾，大脑已短路，拒绝提供连贯逻辑。精神状态如同被病毒入侵的显示器，建议立刻断电重启。', 
+        do: '强制自己闭眼睡觉', 
+        dont: '做任何人生重大决定', 
+        style: 'background: linear-gradient(to right, #9ca3af, #4b5563);', 
+        textColor: 'text-green-400',
+        isSSR: true // 复用故障特效
+    }
+};
         const fallbackResult = {
             name: "马赛克乱码色",
             state: "逻辑崩塌",
