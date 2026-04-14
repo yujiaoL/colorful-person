@@ -4,47 +4,498 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>精神状态色彩测试</title>
-    <!-- 引入 Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- 引入 Vue 3 -->
-    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
-    <!-- 引入 html2canvas 用于截图分享 -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    
     <style>
+        :root {
+            --bg-page: #eceff3;
+            --bg-card: #ffffff;
+            --bg-soft: #f5f7fa;
+            --bg-soft-2: #eef1f5;
+            --text-main: #16181d;
+            --text-muted: #6b7280;
+            --text-light: #f8fafc;
+            --line: #e5e7eb;
+            --shadow-lg: 0 24px 60px rgba(15, 23, 42, 0.12);
+            --shadow-md: 0 14px 30px rgba(15, 23, 42, 0.08);
+            --radius-xl: 28px;
+            --radius-lg: 22px;
+            --radius-md: 18px;
+            --radius-sm: 14px;
+            --container-width: 430px;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html, body {
+            margin: 0;
+            min-height: 100%;
+        }
+
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-            background-color: #f3f4f6;
+            color: var(--text-main);
+            background:
+                radial-gradient(circle at top left, rgba(255, 255, 255, 0.95), transparent 35%),
+                radial-gradient(circle at bottom right, rgba(203, 213, 225, 0.7), transparent 30%),
+                linear-gradient(160deg, #f6f7fb 0%, #e8edf3 100%);
             -webkit-tap-highlight-color: transparent;
         }
 
-        /* 隐藏滚动条但允许滚动 */
-        .no-scrollbar::-webkit-scrollbar {
-            display: none;
+        button {
+            font: inherit;
+            border: 0;
+            cursor: pointer;
         }
-        .no-scrollbar {
-            -ms-overflow-style: none;
+
+        .page {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .app-shell {
+            width: 100%;
+            max-width: var(--container-width);
+            min-height: 100vh;
+            background: var(--bg-card);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .screen {
+            display: none;
+            flex: 1;
+        }
+
+        .screen.active {
+            display: flex;
+        }
+
+        .screen-home {
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 32px;
+            text-align: center;
+            background: linear-gradient(145deg, #f9fafb 0%, #e5e7eb 100%);
+        }
+
+        .hero-orb {
+            width: 96px;
+            height: 96px;
+            margin-bottom: 24px;
+            border-radius: 999px;
+            background: linear-gradient(135deg, #ec4899 0%, #8b5cf6 45%, #4f46e5 100%);
+            box-shadow: 0 18px 34px rgba(139, 92, 246, 0.28);
+            animation: pulse 2s infinite ease-in-out;
+        }
+
+        h1, h2, p {
+            margin: 0;
+        }
+
+        .home-title {
+            font-size: 32px;
+            line-height: 1.15;
+            font-weight: 900;
+            letter-spacing: -0.04em;
+            margin-bottom: 10px;
+        }
+
+        .home-subtitle {
+            color: var(--text-muted);
+            font-size: 14px;
+            line-height: 1.7;
+            margin-bottom: 36px;
+        }
+
+        .primary-btn,
+        .secondary-btn,
+        .option-btn {
+            width: 100%;
+            border-radius: var(--radius-lg);
+            transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease, background-color 0.18s ease;
+        }
+
+        .primary-btn {
+            background: #111111;
+            color: #ffffff;
+            padding: 18px 20px;
+            font-size: 18px;
+            font-weight: 800;
+            box-shadow: 0 10px 0 rgba(0, 0, 0, 0.18);
+        }
+
+        .primary-btn:active {
+            transform: translateY(6px);
+            box-shadow: 0 4px 0 rgba(0, 0, 0, 0.18);
+        }
+
+        .screen-quiz {
+            flex-direction: column;
+            padding: 24px;
+        }
+
+        .progress-wrap {
+            margin: 10px 0 28px;
+        }
+
+        .progress-meta {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            color: #9ca3af;
+            font-size: 12px;
+            font-weight: 800;
+            letter-spacing: 0.04em;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #f1f5f9;
+            border-radius: 999px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            width: 0;
+            height: 100%;
+            background: #111111;
+            border-radius: 999px;
+            transition: width 0.3s ease-out;
+        }
+
+        .question-title {
+            font-size: 24px;
+            font-weight: 800;
+            line-height: 1.55;
+            margin-bottom: 28px;
+        }
+
+        .options {
+            display: grid;
+            gap: 14px;
+        }
+
+        .option-btn {
+            text-align: left;
+            padding: 18px;
+            background: #ffffff;
+            border: 2px solid #f1f5f9;
+            box-shadow: 0 6px 16px rgba(15, 23, 42, 0.05);
+        }
+
+        .option-btn:hover {
+            border-color: #111827;
+            transform: translateY(-1px);
+        }
+
+        .option-btn:active {
+            transform: scale(0.985);
+        }
+
+        .option-label {
+            display: block;
+            color: #374151;
+            font-size: 16px;
+            line-height: 1.6;
+            font-weight: 500;
+        }
+
+        .screen-loading {
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 32px;
+            background: #000000;
+            color: #ffffff;
+        }
+
+        .spinner {
+            width: 48px;
+            height: 48px;
+            border: 4px solid rgba(107, 114, 128, 0.45);
+            border-top-color: #ffffff;
+            border-radius: 50%;
+            animation: spin 0.9s linear infinite;
+            margin-bottom: 24px;
+        }
+
+        .loading-title {
+            font-size: 22px;
+            font-weight: 800;
+            margin-bottom: 8px;
+        }
+
+        .loading-text {
+            color: #9ca3af;
+            font-size: 14px;
+            font-family: ui-monospace, SFMono-Regular, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+        }
+
+        .screen-result {
+            flex-direction: column;
+            background: #f3f4f6;
+        }
+
+        .result-scroll {
+            flex: 1;
+            overflow-y: auto;
             scrollbar-width: none;
         }
 
-        /* 选项悬浮动画 */
-        .option-card {
-            transition: all 0.2s ease;
-        }
-        .option-card:active {
-            transform: scale(0.98);
+        .result-scroll::-webkit-scrollbar {
+            display: none;
         }
 
-        /* 故障风特效 (SSR 五彩斑斓的黑专属) */
-        .glitch-bg {
-            background: #000;
-            position: relative;
-            overflow: hidden;
+        .capture-area {
+            background: #ffffff;
+            padding: 24px 24px 32px;
+            min-height: max-content;
         }
-        .glitch-bg::before, .glitch-bg::after {
+
+        .eyebrow {
+            padding-top: 10px;
+            text-align: center;
+            margin-bottom: 24px;
+            color: #9ca3af;
+            font-size: 12px;
+            font-weight: 800;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+        }
+
+        .result-card {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 1 / 1;
+            border-radius: 30px;
+            margin-bottom: 24px;
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            overflow: hidden;
+            box-shadow: inset 0 2px 20px rgba(255, 255, 255, 0.08), 0 24px 45px rgba(15, 23, 42, 0.12);
+        }
+
+        .result-badge {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            display: none;
+            background: rgba(255, 255, 255, 0.18);
+            color: #ffffff;
+            backdrop-filter: blur(12px);
+            padding: 8px 12px;
+            border-radius: 999px;
+            font-size: 12px;
+            font-weight: 900;
+            border: 1px solid rgba(255, 255, 255, 0.25);
+        }
+
+        .result-badge.visible {
+            display: inline-flex;
+        }
+
+        .result-name {
+            font-size: 42px;
+            line-height: 1.05;
+            font-weight: 900;
+            margin-bottom: 6px;
+            letter-spacing: -0.05em;
+            text-shadow: 0 6px 14px rgba(15, 23, 42, 0.16);
+        }
+
+        .result-state {
+            font-size: 20px;
+            font-weight: 600;
+            opacity: 0.9;
+            text-shadow: 0 6px 14px rgba(15, 23, 42, 0.16);
+        }
+
+        .result-info {
+            display: grid;
+            gap: 14px;
+        }
+
+        .result-desc {
+            background: #f8fafc;
+            border: 1px solid #eef2f7;
+            border-radius: var(--radius-md);
+            padding: 16px;
+            color: #4b5563;
+            font-size: 14px;
+            line-height: 1.75;
+        }
+
+        .result-desc strong {
+            color: #111111;
+            margin-right: 8px;
+        }
+
+        .tips-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .tip-card {
+            border-radius: var(--radius-md);
+            padding: 14px;
+            border: 1px solid transparent;
+        }
+
+        .tip-card.do {
+            background: rgba(34, 197, 94, 0.08);
+            border-color: rgba(34, 197, 94, 0.18);
+        }
+
+        .tip-card.dont {
+            background: rgba(239, 68, 68, 0.08);
+            border-color: rgba(239, 68, 68, 0.16);
+        }
+
+        .tip-label {
+            font-size: 12px;
+            font-weight: 800;
+            margin-bottom: 6px;
+        }
+
+        .tip-card.do .tip-label {
+            color: #15803d;
+        }
+
+        .tip-card.dont .tip-label {
+            color: #b91c1c;
+        }
+
+        .tip-value {
+            color: #4b5563;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        .capture-footer {
+            margin-top: 30px;
+            padding-top: 16px;
+            border-top: 1px solid #f1f5f9;
+            opacity: 0.55;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 10px;
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+            letter-spacing: 0.1em;
+        }
+
+        .action-bar {
+            position: sticky;
+            bottom: 0;
+            padding: 20px 24px 24px;
+            background: rgba(255, 255, 255, 0.98);
+            border-top: 1px solid #f1f5f9;
+            box-shadow: 0 -10px 24px rgba(15, 23, 42, 0.04);
+            backdrop-filter: blur(12px);
+        }
+
+        .secondary-btn {
+            padding: 14px 18px;
+            background: #f3f4f6;
+            color: #4b5563;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .secondary-btn:hover {
+            background: #e5e7eb;
+        }
+
+        .btn-stack {
+            display: grid;
+            gap: 12px;
+        }
+
+        .btn-content {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .download-icon {
+            width: 18px;
+            height: 18px;
+            position: relative;
+            display: inline-block;
+        }
+
+        .download-icon::before,
+        .download-icon::after {
             content: "";
             position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            background: currentColor;
+        }
+
+        .download-icon::before {
+            width: 2px;
+            height: 12px;
+            top: 0;
+            border-radius: 999px;
+        }
+
+        .download-icon::after {
+            width: 10px;
+            height: 10px;
+            bottom: 0;
+            clip-path: polygon(50% 100%, 0 35%, 28% 35%, 28% 0, 72% 0, 72% 35%, 100% 35%);
+        }
+
+        .toast {
+            position: absolute;
+            left: 50%;
+            bottom: 96px;
+            transform: translate(-50%, 20px);
+            padding: 12px 20px;
+            border-radius: 999px;
+            background: rgba(17, 24, 39, 0.86);
+            color: #ffffff;
+            font-size: 14px;
+            font-weight: 500;
+            backdrop-filter: blur(10px);
+            white-space: nowrap;
+            z-index: 20;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.28s ease, transform 0.28s ease;
+        }
+
+        .toast.visible {
+            opacity: 1;
+            transform: translate(-50%, 0);
+        }
+
+        .glitch-bg {
+            background: #000000;
+        }
+
+        .glitch-bg::before,
+        .glitch-bg::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+        }
+
+        .glitch-bg::before {
             background: repeating-linear-gradient(
                 45deg,
                 transparent,
@@ -54,381 +505,607 @@
             );
             mix-blend-mode: color-dodge;
             animation: glitch-anim 0.3s infinite alternate-reverse;
-            pointer-events: none;
         }
+
         .glitch-bg::after {
             background: repeating-linear-gradient(
                 -45deg,
                 transparent,
                 transparent 15px,
-                rgba(0, 255, 255, 0.2) 15px,
-                rgba(0, 255, 255, 0.2) 30px
+                rgba(0, 255, 255, 0.18) 15px,
+                rgba(0, 255, 255, 0.18) 30px
             );
             animation: glitch-anim-2 0.4s infinite alternate;
+        }
+
+        .text-white {
+            color: #ffffff;
+        }
+
+        .text-dark {
+            color: #111827;
+        }
+
+        .text-gray {
+            color: #9ca3af;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.04); opacity: 0.88; }
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
         }
 
         @keyframes glitch-anim {
             0% { transform: translate(2px, 2px); opacity: 0.8; }
             100% { transform: translate(-2px, -2px); opacity: 0.5; }
         }
+
         @keyframes glitch-anim-2 {
             0% { transform: translate(-3px, 1px); opacity: 0.6; }
             100% { transform: translate(3px, -1px); opacity: 0.9; }
         }
 
-        /* 吐司提示框动画 */
-        .toast-enter-active, .toast-leave-active {
-            transition: all 0.3s ease;
+        @media (min-width: 640px) {
+            .app-shell {
+                min-height: 800px;
+                border-radius: 34px;
+                box-shadow: var(--shadow-lg);
+            }
         }
-        .toast-enter-from, .toast-leave-to {
-            opacity: 0;
-            transform: translateY(20px) translateX(-50%);
+
+        @media (max-width: 420px) {
+            .page {
+                padding: 0;
+            }
+
+            .app-shell {
+                max-width: none;
+            }
+
+            .question-title {
+                font-size: 22px;
+            }
+
+            .result-name {
+                font-size: 36px;
+            }
+
+            .tips-grid {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
-<body class="text-gray-800 antialiased min-h-screen flex items-center justify-center">
+<body>
+    <div class="page">
+        <div id="app" class="app-shell">
+            <section id="screen-home" class="screen screen-home active">
+                <div class="hero-orb"></div>
+                <h1 class="home-title">精神状态色彩测试</h1>
+                <p class="home-subtitle">测一测你这具皮囊下，藏着什么颜色的疯批灵魂。</p>
+                <button id="start-btn" class="primary-btn">开始心智扫描</button>
+            </section>
 
-<div id="app" class="w-full max-w-md bg-white min-h-screen sm:min-h-[800px] sm:h-auto sm:rounded-3xl sm:shadow-2xl relative overflow-hidden flex flex-col">
-    
-    <!-- 状态 0：首页 -->
-    <div v-if="appState === 0" class="flex-1 flex flex-col items-center justify-center p-8 text-center bg-gradient-to-br from-gray-50 to-gray-200">
-        <div class="w-24 h-24 mb-6 rounded-full bg-gradient-to-tr from-pink-500 via-purple-500 to-indigo-500 shadow-lg animate-pulse"></div>
-        <h1 class="text-3xl font-black mb-2 tracking-tight">精神状态色彩测试</h1>
-        <p class="text-gray-500 mb-10 text-sm">测一测你这具皮囊下，藏着什么颜色的疯批灵魂。</p>
-        <button @click="startTest" class="w-full py-4 bg-black text-white rounded-2xl font-bold text-lg shadow-[0_8px_0_rgb(0,0,0,0.2)] active:shadow-[0_0px_0_rgb(0,0,0,0.2)] active:translate-y-2 transition-all">
-            开始心智扫描
-        </button>
-    </div>
-
-    <!-- 状态 1：答题页 -->
-    <div v-if="appState === 1" class="flex-1 flex flex-col p-6">
-        <!-- 进度条 -->
-        <div class="mb-8 mt-4">
-            <div class="flex justify-between text-xs text-gray-400 font-bold mb-2">
-                <span>SCANNED</span>
-                <span>{{ currentQIndex + 1 }} / {{ questions.length }}</span>
-            </div>
-            <div class="w-full bg-gray-100 rounded-full h-2">
-                <div class="bg-black h-2 rounded-full transition-all duration-300 ease-out" :style="{ width: progressPercent + '%' }"></div>
-            </div>
-        </div>
-
-        <!-- 题目 -->
-        <div class="flex-1">
-            <h2 class="text-xl font-bold leading-relaxed mb-8">{{ currentQuestion.text }}</h2>
-            
-            <div class="space-y-4">
-                <button 
-                    v-for="(opt, index) in shuffledOptions" 
-                    :key="index"
-                    @click="selectOption(opt.type)"
-                    class="option-card w-full text-left p-4 rounded-2xl border-2 border-gray-100 bg-white hover:border-gray-900 focus:border-black shadow-sm"
-                >
-                    <span class="block font-medium text-gray-700">{{ opt.label }}</span>
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <!-- 状态 2：解析加载页 -->
-    <div v-if="appState === 2" class="flex-1 flex flex-col items-center justify-center p-8 bg-black text-white">
-        <div class="animate-spin w-12 h-12 border-4 border-gray-600 border-t-white rounded-full mb-6"></div>
-        <h2 class="text-xl font-bold mb-2">正在解析潜意识底色...</h2>
-        <p class="text-gray-400 text-sm font-mono">{{ loadingText }}</p>
-    </div>
-
-    <!-- 状态 3：结果色卡页 -->
-    <div v-show="appState === 3" class="flex-1 flex flex-col bg-gray-100 no-scrollbar overflow-y-auto">
-        
-        <!-- 截图区域 -->
-        <div id="capture-area" class="bg-white p-6 pb-8" style="min-height: max-content;">
-            <div class="text-center mb-6 pt-4">
-                <p class="text-xs font-bold text-gray-400 tracking-widest uppercase">Your True Color</p>
-            </div>
-            
-            <!-- 色块区 -->
-            <div 
-                class="w-full aspect-square rounded-3xl mb-6 shadow-inner flex flex-col justify-end p-6 relative overflow-hidden"
-                :class="[resultData.bgClass, { 'glitch-bg': resultData.isSSR }]"
-                :style="resultData.style"
-            >
-                <!-- SSR 标签 -->
-                <div v-if="resultData.isSSR" class="absolute top-4 right-4 bg-white/20 backdrop-blur-md px-3 py-1 rounded-full text-white text-xs font-black border border-white/30">
-                    SSR 隐藏款
-                </div>
-                
-                <h1 class="text-4xl font-black mb-1 drop-shadow-md" :class="resultData.textColor">{{ resultData.name }}</h1>
-                <p class="text-lg font-medium opacity-90 drop-shadow-md" :class="resultData.textColor">{{ resultData.state }}</p>
-            </div>
-
-            <!-- 解释区 -->
-            <div class="space-y-4">
-                <div class="bg-gray-50 p-4 rounded-2xl border border-gray-100">
-                    <p class="text-sm text-gray-600 leading-relaxed"><span class="font-bold text-black mr-2">临床表现:</span>{{ resultData.desc }}</p>
-                </div>
-                
-                <div class="flex space-x-3">
-                    <div class="flex-1 bg-green-50/50 p-3 rounded-2xl border border-green-100">
-                        <p class="text-xs font-bold text-green-700 mb-1">宜</p>
-                        <p class="text-xs text-gray-600">{{ resultData.do }}</p>
+            <section id="screen-quiz" class="screen screen-quiz">
+                <div class="progress-wrap">
+                    <div class="progress-meta">
+                        <span>SCANNED</span>
+                        <span id="progress-text">1 / 6</span>
                     </div>
-                    <div class="flex-1 bg-red-50/50 p-3 rounded-2xl border border-red-100">
-                        <p class="text-xs font-bold text-red-700 mb-1">忌</p>
-                        <p class="text-xs text-gray-600">{{ resultData.dont }}</p>
+                    <div class="progress-bar">
+                        <div id="progress-fill" class="progress-fill"></div>
                     </div>
                 </div>
-            </div>
-            
-            <!-- 底部标识 -->
-            <div class="mt-8 pt-4 border-t border-gray-100 flex justify-between items-center opacity-50">
-                <span class="text-[10px] font-mono">MENTAL COLOR TEST</span>
-                <span class="text-[10px] font-mono">SCAN TO TEST ➔</span>
-            </div>
-        </div>
 
-        <!-- 操作按钮区 (不截图) -->
-        <div class="p-6 bg-white sticky bottom-0 border-t border-gray-100 shadow-[0_-10px_20px_rgba(0,0,0,0.02)]">
-            <button @click="saveImage" class="w-full py-4 bg-black text-white rounded-2xl font-bold text-base mb-3 flex justify-center items-center">
-                <svg v-if="!isSaving" class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
-                <div v-else class="animate-spin w-5 h-5 border-2 border-white border-t-transparent rounded-full mr-2"></div>
-                {{ isSaving ? '生成色卡中...' : '保存专属色卡' }}
-            </button>
-            <button @click="resetTest" class="w-full py-3 bg-gray-100 text-gray-600 rounded-2xl font-medium text-sm">
-                重新测试
-            </button>
+                <div>
+                    <h2 id="question-title" class="question-title"></h2>
+                    <div id="options" class="options"></div>
+                </div>
+            </section>
+
+            <section id="screen-loading" class="screen screen-loading">
+                <div class="spinner"></div>
+                <h2 class="loading-title">正在解析潜意识底色...</h2>
+                <p id="loading-text" class="loading-text">Extracting...</p>
+            </section>
+
+            <section id="screen-result" class="screen screen-result">
+                <div class="result-scroll">
+                    <div id="capture-area" class="capture-area">
+                        <div class="eyebrow">Your True Color</div>
+
+                        <div id="result-card" class="result-card">
+                            <div id="result-badge" class="result-badge">SSR 隐藏款</div>
+                            <h1 id="result-name" class="result-name"></h1>
+                            <p id="result-state" class="result-state"></p>
+                        </div>
+
+                        <div class="result-info">
+                            <div class="result-desc">
+                                <strong>临床表现:</strong><span id="result-desc"></span>
+                            </div>
+
+                            <div class="tips-grid">
+                                <div class="tip-card do">
+                                    <div class="tip-label">宜</div>
+                                    <div id="result-do" class="tip-value"></div>
+                                </div>
+                                <div class="tip-card dont">
+                                    <div class="tip-label">忌</div>
+                                    <div id="result-dont" class="tip-value"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="capture-footer">
+                            <span>MENTAL COLOR TEST</span>
+                            <span>SCAN TO TEST -&gt;</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="action-bar">
+                    <div class="btn-stack">
+                        <button id="save-btn" class="primary-btn">
+                            <span class="btn-content">
+                                <span class="download-icon" aria-hidden="true"></span>
+                                <span id="save-btn-text">保存专属色卡</span>
+                            </span>
+                        </button>
+                        <button id="reset-btn" class="secondary-btn">重新测试</button>
+                    </div>
+                </div>
+            </section>
+
+            <div id="toast" class="toast"></div>
         </div>
     </div>
 
-    <!-- 自定义 Toast 提示 -->
-    <transition name="toast">
-        <div v-if="toastMsg" class="absolute bottom-24 left-1/2 transform -translate-x-1/2 bg-black/80 text-white px-6 py-3 rounded-full text-sm font-medium backdrop-blur-sm z-50 whitespace-nowrap">
-            {{ toastMsg }}
-        </div>
-    </transition>
+    <script>
+        const resultDB = {
+            A: { name: "警告荧光红", state: "随时爆炸态", desc: "你的忍耐度已欠费，现在全靠一口怒气在给身体供电。平等地创飞地球上的每一个人。", do: "听重金属摇滚", dont: "回复工作群", cardStyle: { background: "#ff003c", textColor: "#ffffff" } },
+            B: { name: "防窥膜黑", state: "绝对隔离态", desc: "极致的物理与精神双重屏蔽。结界太厚了，别说别人走不进你的心，你自己有时候都找不到门。", do: "拉黑讨厌的人", dont: "强行聚餐", cardStyle: { background: "#1a1a1a", textColor: "#ffffff" } },
+            C: { name: "沉迷内耗紫", state: "脑内小剧场", desc: "紫气东来全是愁。表面波澜不惊，脑内已经演完了一部八十集的家庭伦理谍战大戏。", do: "发仅自己可见的朋友圈", dont: "睡前复盘今天", cardStyle: { background: "#6b21a8", textColor: "#ffffff" } },
+            D: { name: "掉线水泥灰", state: "超然摆烂态", desc: "彻底与世界和解（放弃挣扎）。世界是个大草台班子，而你连个马扎都不想搬，只想躺下。", do: "无目的地发呆", dont: "做五年规划", cardStyle: { background: "#9ca3af", textColor: "#111827" } },
+            AC: { name: "高压锅蒸汽白", state: "沸腾边缘态", desc: "看着纯洁无害还在冒气，其实内耗已经达到沸点，只要谁敢碰一下盖子，马上炸开创飞所有人。", do: "做剧烈运动", dont: "憋着不说话", cardStyle: { background: "#ffffff", textColor: "#111827", border: "4px solid #e5e7eb" } },
+            CA: { name: "毒蘑菇斑斓紫", state: "阴阳怪气态", desc: "脑内剧场极其丰富且带毒，想得太多导致精神异变，一开口就是让人无法反驳的高级嘲讽。", do: "写吐槽日记", dont: "假装大度", cardStyle: { background: "linear-gradient(135deg, #7c3aed, #ec4899)", textColor: "#ffffff" } },
+            AD: { name: "脆皮香蕉黄", state: "光速放弃态", desc: "叫唤得比谁都响，放弃得比谁都快。前一秒“我要毁灭世界”，后一秒“算了太累了点个外卖吧”。", do: "吃点甜的", dont: "立Flag", cardStyle: { background: "#facc15", textColor: "#111827" } },
+            BC: { name: "深海幽灵蓝", state: "抑郁水鬼态", desc: "极度社恐。把自己沉在几万米深的海底，在无人知晓的暗处默默反思今天说错的半句话。", do: "戴降噪耳机", dont: "去人多的地方", cardStyle: { background: "#1e3a8a", textColor: "#ffffff" } },
+            BD: { name: "隐形玻璃色", state: "赛博透明人", desc: "极致的透明人心态。不想防御谁，也不想攻击谁，只想化作一阵风在这个世界上毫无痕迹地混日子。", do: "潜水潜水潜水", dont: "当出头鸟", cardStyle: { background: "linear-gradient(135deg, #f3f4f6, #e5e7eb)", textColor: "#9ca3af" } },
+            SSR: { name: "五彩斑斓的黑", state: "薛定谔的稳定", desc: "四股力量在体内达到诡异平衡。既想毁灭世界又想拯救小猫，既想摆烂又在疯狂内耗。常规色彩已无法定义你。", do: "拔掉网线", dont: "向外界解释自己", cardStyle: { background: "#000000", textColor: "#ffffff" }, isSSR: true }
+        };
 
-</div>
-
-<script>
-const { createApp, ref, computed, watch } = Vue;
-
-// 洗牌算法函数 (Fisher-Yates)
-const shuffleArray = (array) => {
-    const newArray = [...array];
-    for (let i = newArray.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
-    }
-    return newArray;
-};
-
-// 完整的图鉴数据库
-const resultDB = {
-    // 单极主导
-    'A': { name: '警告荧光红', state: '随时爆炸态', desc: '你的忍耐度已欠费，现在全靠一口怒气在给身体供电。平等地创飞地球上的每一个人。', do: '听重金属摇滚', dont: '回复工作群', bgClass: 'bg-[#ff003c]', textColor: 'text-white' },
-    'B': { name: '防窥膜黑', state: '绝对隔离态', desc: '极致的物理与精神双重屏蔽。结界太厚了，别说别人走不进你的心，你自己有时候都找不到门。', do: '拉黑讨厌的人', dont: '强行聚餐', bgClass: 'bg-[#1a1a1a]', textColor: 'text-white' },
-    'C': { name: '沉迷内耗紫', state: '脑内小剧场', desc: '紫气东来全是愁。表面波澜不惊，脑内已经演完了一部八十集的家庭伦理谍战大戏。', do: '发仅自己可见的朋友圈', dont: '睡前复盘今天', bgClass: 'bg-[#6b21a8]', textColor: 'text-white' },
-    'D': { name: '掉线水泥灰', state: '超然摆烂态', desc: '彻底与世界和解（放弃挣扎）。世界是个大草台班子，而你连个马扎都不想搬，只想躺下。', do: '无目的地发呆', dont: '做五年规划', bgClass: 'bg-[#9ca3af]', textColor: 'text-gray-900' },
-    
-    // 双轨交错
-    'AC': { name: '高压锅蒸汽白', state: '沸腾边缘态', desc: '看着纯洁无害还在冒气，其实内耗已经达到沸点，只要谁敢碰一下盖子，马上炸开创飞所有人。', do: '做剧烈运动', dont: '憋着不说话', bgClass: 'bg-white border-4 border-gray-200', textColor: 'text-gray-900' },
-    'CA': { name: '毒蘑菇斑斓紫', state: '阴阳怪气态', desc: '脑内剧场极其丰富且带毒，想得太多导致精神异变，一开口就是让人无法反驳的高级嘲讽。', do: '写吐槽日记', dont: '假装大度', style: 'background: linear-gradient(135deg, #7c3aed, #ec4899);', textColor: 'text-white' },
-    'AD': { name: '脆皮香蕉黄', state: '光速放弃态', desc: '叫唤得比谁都响，放弃得比谁都快。前一秒“我要毁灭世界”，后一秒“算了太累了点个外卖吧”。', do: '吃点甜的', dont: '立Flag', bgClass: 'bg-[#facc15]', textColor: 'text-gray-900' },
-    'BC': { name: '深海幽灵蓝', state: '抑郁水鬼态', desc: '极度社恐。把自己沉在几万米深的海底，在无人知晓的暗处默默反思今天说错的半句话。', do: '戴降噪耳机', dont: '去人多的地方', bgClass: 'bg-[#1e3a8a]', textColor: 'text-white' },
-    'BD': { name: '隐形玻璃色', state: '赛博透明人', desc: '极致的透明人心态。不想防御谁，也不想攻击谁，只想化作一阵风在这个世界上毫无痕迹地混日子。', do: '潜水潜水潜水', dont: '当出头鸟', style: 'background: linear-gradient(135deg, #f3f4f6, #e5e7eb);', textColor: 'text-gray-400' },
-    
-    // 隐藏 SSR
-    'SSR': { name: '五彩斑斓的黑', state: '薛定谔的稳定', desc: '四股力量在体内达到诡异平衡。既想毁灭世界又想拯救小猫，既想摆烂又在疯狂内耗。常规色彩已无法定义你。', do: '拔掉网线', dont: '向外界解释自己', bgClass: 'bg-black', textColor: 'text-white', isSSR: true },
-};
-
-// 兜底色卡
-const fallbackResult = { name: '马赛克乱码色', state: '逻辑崩塌', desc: '你的选择充满了矛盾，大脑已短路。精神状态如同被病毒入侵，建议立刻断电重启。', do: '立刻睡觉', dont: '做任何决定', bgClass: 'bg-gray-800', textColor: 'text-green-400' };
-
-createApp({
-    setup() {
-        const appState = ref(0); // 0:首页, 1:答题, 2:加载, 3:结果
-        const currentQIndex = ref(0);
-        const scores = ref({ A: 0, B: 0, C: 0, D: 0 });
-        const finalResultKey = ref('');
-        const loadingText = ref('Extracting...');
-        const isSaving = ref(false);
-        const toastMsg = ref('');
-        const shuffledOptions = ref([]); // 用于存储当前打乱后的选项
-        let toastTimer = null;
+        const fallbackResult = {
+            name: "马赛克乱码色",
+            state: "逻辑崩塌",
+            desc: "你的选择充满了矛盾，大脑已短路。精神状态如同被病毒入侵，建议立刻断电重启。",
+            do: "立刻睡觉",
+            dont: "做任何决定",
+            cardStyle: { background: "#1f2937", textColor: "#86efac" }
+        };
 
         const questions = [
             {
                 text: "周日深夜，老板突然在群里艾特你问“进度如何”，你的第一反应是：",
                 options: [
-                    { label: "直接回一个大火的阴阳怪气表情包，主打同归于尽。", type: 'A' },
-                    { label: "迅速退出微信并开启飞行模式，假装自己已失联。", type: 'B' },
-                    { label: "反复打字又删除，脑补了80种理由，甚至想到了辞职。", type: 'C' },
-                    { label: "已读，但心跳频率都没变：“反正今晚不干，明天再说”。", type: 'D' }
+                    { label: "直接回一个大火的阴阳怪气表情包，主打同归于尽。", type: "A" },
+                    { label: "迅速退出微信并开启飞行模式，假装自己已失联。", type: "B" },
+                    { label: "反复打字又删除，脑补了80种理由，甚至想到了辞职。", type: "C" },
+                    { label: "已读，但心跳频率都没变：“反正今晚不干，明天再说”。", type: "D" }
                 ]
             },
             {
                 text: "走在路上突然下暴雨，而你没带伞，此时你会：",
                 options: [
-                    { label: "干脆在雨里狂奔大叫，让路人觉得你精神不太正常。", type: 'A' },
-                    { label: "以百米冲刺速度冲向最近的屋檐，把自己缩成一团。", type: 'B' },
-                    { label: "一边淋雨一边想：“偏偏今天下雨？我最近运气真差。”", type: 'C' },
-                    { label: "无所谓地走在雨里，觉得“湿透了挺好，不用躲了”。", type: 'D' }
+                    { label: "干脆在雨里狂奔大叫，让路人觉得你精神不太正常。", type: "A" },
+                    { label: "以百米冲刺速度冲向最近的屋檐，把自己缩成一团。", type: "B" },
+                    { label: "一边淋雨一边想：“偏偏今天下雨？我最近运气真差。”", type: "C" },
+                    { label: "无所谓地走在雨里，觉得“湿透了挺好，不用躲了”。", type: "D" }
                 ]
             },
             {
                 text: "朋友圈发了一张精心修过的照片，半小时没人点赞，你会：",
                 options: [
-                    { label: "评论一句“大家都在忙吗？那我也忙了”，拉黑全世界。", type: 'A' },
-                    { label: "迅速把权限改为“仅自己可见”，假装这事儿没发生过。", type: 'B' },
-                    { label: "逐像素检查照片，怀疑自己修得太假或者文案太矫情。", type: 'C' },
-                    { label: "甚至忘了自己发过，发朋友圈只是为了给自己留存档。", type: 'D' }
+                    { label: "评论一句“大家都在忙吗？那我也忙了”，拉黑全世界。", type: "A" },
+                    { label: "迅速把权限改为“仅自己可见”，假装这事儿没发生过。", type: "B" },
+                    { label: "逐像素检查照片，怀疑自己修得太假或者文案太矫情。", type: "C" },
+                    { label: "甚至忘了自己发过，发朋友圈只是为了给自己留存档。", type: "D" }
                 ]
             },
             {
                 text: "电梯里遇到一个不太熟、但必须打招呼的同事，你会：",
                 options: [
-                    { label: "主动发起高频社交攻击，聊到对方想报警逃离。", type: 'A' },
-                    { label: "盯着电梯楼层数字，假装正在进行深度思考。", type: 'B' },
-                    { label: "疯狂组织语言，出电梯后反思刚才的“早”是不是调门太高。", type: 'C' },
-                    { label: "面无表情地点下头，多一个字都不想说。", type: 'D' }
+                    { label: "主动发起高频社交攻击，聊到对方想报警逃离。", type: "A" },
+                    { label: "盯着电梯楼层数字，假装正在进行深度思考。", type: "B" },
+                    { label: "疯狂组织语言，出电梯后反思刚才的“早”是不是调门太高。", type: "C" },
+                    { label: "面无表情地点下头，多一个字都不想说。", type: "D" }
                 ]
             },
             {
                 text: "外卖送错了，给了一份你最讨厌的配菜，此时你：",
                 options: [
-                    { label: "必须找客服理论，甚至想写篇500字小作文控诉。", type: 'A' },
-                    { label: "默默挑出来扔掉，并发誓再也不点这家店。", type: 'B' },
-                    { label: "纠结要不要退款，怕麻烦又怕骑手找上门，气得吃不下。", type: 'C' },
-                    { label: "就当是命运的盲盒，闭着眼咽下去，反正都是碳水。", type: 'D' }
+                    { label: "必须找客服理论，甚至想写篇500字小作文控诉。", type: "A" },
+                    { label: "默默挑出来扔掉，并发誓再也不点这家店。", type: "B" },
+                    { label: "纠结要不要退款，怕麻烦又怕骑手找上门，气得吃不下。", type: "C" },
+                    { label: "就当是命运的盲盒，闭着眼咽下去，反正都是碳水。", type: "D" }
                 ]
             },
             {
                 text: "深夜明明很想独处，但又发了一张没人看懂的emo图，心态是：",
                 options: [
-                    { label: "如果有人不顺着我说话，我就顺着网线过去咬他。", type: 'A' },
-                    { label: "发完立刻设为不可见，只是想排解一下发烫的脑机。", type: 'B' },
-                    { label: "期待有人秒回，但又害怕别人真的来深度关心我。", type: 'C' },
-                    { label: "不知道，手滑发的，懒得删了。", type: 'D' }
+                    { label: "如果有人不顺着我说话，我就顺着网线过去咬他。", type: "A" },
+                    { label: "发完立刻设为不可见，只是想排解一下发烫的脑机。", type: "B" },
+                    { label: "期待有人秒回，但又害怕别人真的来深度关心我。", type: "C" },
+                    { label: "不知道，手滑发的，懒得删了。", type: "D" }
                 ]
             }
         ];
 
-        const currentQuestion = computed(() => questions[currentQIndex.value]);
-        const progressPercent = computed(() => (currentQIndex.value / questions.length) * 100);
-        const resultData = computed(() => resultDB[finalResultKey.value] || fallbackResult);
+        const state = {
+            appState: 0,
+            currentQIndex: 0,
+            scores: { A: 0, B: 0, C: 0, D: 0 },
+            finalResultKey: "",
+            isSaving: false,
+            toastTimer: null
+        };
 
-        // 监听题目索引变化，每次切题时重新打乱选项
-        watch(currentQIndex, () => {
-            if (currentQuestion.value && currentQuestion.value.options) {
-                shuffledOptions.value = shuffleArray(currentQuestion.value.options);
+        const screens = {
+            home: document.getElementById("screen-home"),
+            quiz: document.getElementById("screen-quiz"),
+            loading: document.getElementById("screen-loading"),
+            result: document.getElementById("screen-result")
+        };
+
+        const elements = {
+            startBtn: document.getElementById("start-btn"),
+            progressText: document.getElementById("progress-text"),
+            progressFill: document.getElementById("progress-fill"),
+            questionTitle: document.getElementById("question-title"),
+            options: document.getElementById("options"),
+            loadingText: document.getElementById("loading-text"),
+            resultCard: document.getElementById("result-card"),
+            resultBadge: document.getElementById("result-badge"),
+            resultName: document.getElementById("result-name"),
+            resultState: document.getElementById("result-state"),
+            resultDesc: document.getElementById("result-desc"),
+            resultDo: document.getElementById("result-do"),
+            resultDont: document.getElementById("result-dont"),
+            saveBtn: document.getElementById("save-btn"),
+            saveBtnText: document.getElementById("save-btn-text"),
+            resetBtn: document.getElementById("reset-btn"),
+            toast: document.getElementById("toast")
+        };
+
+        function shuffleArray(array) {
+            const newArray = [...array];
+            for (let i = newArray.length - 1; i > 0; i -= 1) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
             }
-        }, { immediate: true });
+            return newArray;
+        }
 
-        const showToast = (msg) => {
-            toastMsg.value = msg;
-            if(toastTimer) clearTimeout(toastTimer);
-            toastTimer = setTimeout(() => toastMsg.value = '', 2500);
-        };
+        function showScreen(name) {
+            Object.values(screens).forEach((screen) => screen.classList.remove("active"));
+            screens[name].classList.add("active");
+        }
 
-        const startTest = () => {
-            appState.value = 1;
-            currentQIndex.value = 0;
-            scores.value = { A: 0, B: 0, C: 0, D: 0 };
-            // 开始测试时立即打乱第一题的选项
-            shuffledOptions.value = shuffleArray(questions[0].options);
-        };
-
-        const selectOption = (type) => {
-            scores.value[type]++;
-            if (currentQIndex.value < questions.length - 1) {
-                currentQIndex.value++;
-            } else {
-                calculateResult();
+        function showToast(message) {
+            elements.toast.textContent = message;
+            elements.toast.classList.add("visible");
+            if (state.toastTimer) {
+                clearTimeout(state.toastTimer);
             }
-        };
+            state.toastTimer = setTimeout(() => {
+                elements.toast.classList.remove("visible");
+            }, 2500);
+        }
 
-        const calculateResult = () => {
-            appState.value = 2; // 进入加载态
-            
-            // 模拟打字机加载效果
-            let texts = ['Loading Void...', 'Bypassing Shield...', 'Analyzing Chaos...', 'Done.'];
-            let tIdx = 0;
-            let timer = setInterval(() => {
-                loadingText.value = texts[tIdx++];
-                if(tIdx >= texts.length) {
-                    clearInterval(timer);
-                    determineColor();
-                    setTimeout(() => appState.value = 3, 500); // 切换到结果页
-                }
-            }, 600);
-        };
+        function getCurrentQuestion() {
+            return questions[state.currentQIndex];
+        }
 
-        const determineColor = () => {
-            const s = scores.value;
-            // 转换为数组并排序: [['A', 2], ['C', 1], ...]
-            const sorted = Object.entries(s).sort((a, b) => b[1] - a[1]);
+        function renderQuestion() {
+            const question = getCurrentQuestion();
+            const displayIndex = state.currentQIndex + 1;
+            const progress = (state.currentQIndex / questions.length) * 100;
+
+            elements.progressText.textContent = displayIndex + " / " + questions.length;
+            elements.progressFill.style.width = progress + "%";
+            elements.questionTitle.textContent = question.text;
+            elements.options.innerHTML = "";
+
+            shuffleArray(question.options).forEach((option) => {
+                const button = document.createElement("button");
+                button.className = "option-btn";
+                button.innerHTML = '<span class="option-label"></span>';
+                button.querySelector(".option-label").textContent = option.label;
+                button.addEventListener("click", () => selectOption(option.type));
+                elements.options.appendChild(button);
+            });
+        }
+
+        function startTest() {
+            state.appState = 1;
+            state.currentQIndex = 0;
+            state.scores = { A: 0, B: 0, C: 0, D: 0 };
+            renderQuestion();
+            showScreen("quiz");
+        }
+
+        function selectOption(type) {
+            state.scores[type] += 1;
+            if (state.currentQIndex < questions.length - 1) {
+                state.currentQIndex += 1;
+                renderQuestion();
+                return;
+            }
+            calculateResult();
+        }
+
+        function determineColor() {
+            const sorted = Object.entries(state.scores).sort((a, b) => b[1] - a[1]);
             const top1 = sorted[0];
             const top2 = sorted[1];
             const bottom = sorted[3];
 
-            // 1. SSR 判定: 所有分数极度平均 (最大值和最小值差 <= 1)
             if (top1[1] - bottom[1] <= 1) {
-                finalResultKey.value = 'SSR';
+                state.finalResultKey = "SSR";
                 return;
             }
 
-            // 2. 纯色判定: 某一项得分压倒性 (≥ 4分，总题数6题)
             if (top1[1] >= 4) {
-                finalResultKey.value = top1[0];
+                state.finalResultKey = top1[0];
                 return;
             }
 
-            // 3. 复合色判定: 取 Top1 和 Top2
             let key = top1[0] + top2[0];
-            // 如果图鉴里没有具体的顺位组合，尝试反转（比如没有 CA 就用 AC）
             if (!resultDB[key] && resultDB[top2[0] + top1[0]]) {
                 key = top2[0] + top1[0];
             }
-            finalResultKey.value = key;
-        };
+            state.finalResultKey = key;
+        }
 
-        const saveImage = async () => {
-            if (isSaving.value) return;
-            isSaving.value = true;
-            try {
-                const element = document.getElementById('capture-area');
-                // 使用 html2canvas 生成图片 (scale: 2 保证清晰度)
-                const canvas = await html2canvas(element, {
-                    scale: 2,
-                    useCORS: true,
-                    backgroundColor: '#ffffff'
-                });
-                
-                // 转换为图片并下载
-                const image = canvas.toDataURL("image/png");
-                const link = document.createElement('a');
-                link.download = `精神色卡-${resultData.value.name}.png`;
-                link.href = image;
-                link.click();
-                showToast('✨ 色卡生成成功，快去分享吧！');
-            } catch (err) {
-                console.error("生成截图失败", err);
-                showToast('😅 截图失败了，可能是宇宙磁场干扰');
-            } finally {
-                isSaving.value = false;
+        function getResultData() {
+            return resultDB[state.finalResultKey] || fallbackResult;
+        }
+
+        function applyResultCardStyle(cardStyle, isSSR) {
+            elements.resultCard.className = "result-card";
+            elements.resultCard.style.background = cardStyle.background || "#111111";
+            elements.resultCard.style.border = cardStyle.border || "0";
+            elements.resultCard.style.color = cardStyle.textColor || "#ffffff";
+
+            if (isSSR) {
+                elements.resultCard.classList.add("glitch-bg");
             }
-        };
+        }
 
-        const resetTest = () => {
-            appState.value = 0;
-        };
+        function applyResultTextColor(color) {
+            elements.resultName.style.color = color;
+            elements.resultState.style.color = color;
+        }
 
-        return {
-            appState, questions, currentQIndex, currentQuestion, progressPercent,
-            startTest, selectOption, loadingText, resultData, saveImage, isSaving,
-            resetTest, toastMsg, shuffledOptions
-        };
-    }
-}).mount('#app');
-</script>
+        function renderResult() {
+            const resultData = getResultData();
+            const cardStyle = resultData.cardStyle || fallbackResult.cardStyle;
+            applyResultCardStyle(cardStyle, Boolean(resultData.isSSR));
+            applyResultTextColor(cardStyle.textColor || "#ffffff");
+            elements.resultBadge.classList.toggle("visible", Boolean(resultData.isSSR));
+            elements.resultName.textContent = resultData.name;
+            elements.resultState.textContent = resultData.state;
+            elements.resultDesc.textContent = resultData.desc;
+            elements.resultDo.textContent = resultData.do;
+            elements.resultDont.textContent = resultData.dont;
+        }
+
+        function calculateResult() {
+            state.appState = 2;
+            showScreen("loading");
+
+            const texts = ["Loading Void...", "Bypassing Shield...", "Analyzing Chaos...", "Done."];
+            let textIndex = 0;
+            elements.loadingText.textContent = texts[0];
+
+            const timer = setInterval(() => {
+                textIndex += 1;
+                elements.loadingText.textContent = texts[Math.min(textIndex, texts.length - 1)];
+                if (textIndex >= texts.length - 1) {
+                    clearInterval(timer);
+                    determineColor();
+                    renderResult();
+                    setTimeout(() => {
+                        state.appState = 3;
+                        showScreen("result");
+                    }, 500);
+                }
+            }, 600);
+        }
+
+        function resetTest() {
+            state.appState = 0;
+            showScreen("home");
+        }
+
+        function createGradient(ctx, fill, width, height) {
+            if (typeof fill !== "string" || !fill.startsWith("linear-gradient")) {
+                return fill;
+            }
+
+            const matches = fill.match(/#(?:[0-9a-fA-F]{3,8})/g);
+            const colors = matches && matches.length ? matches : ["#111111", "#333333"];
+            const gradient = ctx.createLinearGradient(0, 0, width, height);
+            const step = colors.length === 1 ? 1 : 1 / (colors.length - 1);
+            colors.forEach((color, index) => gradient.addColorStop(step * index, color));
+            return gradient;
+        }
+
+        function wrapText(ctx, text, maxWidth) {
+            const chars = Array.from(text);
+            const lines = [];
+            let currentLine = "";
+
+            chars.forEach((char) => {
+                const testLine = currentLine + char;
+                if (ctx.measureText(testLine).width > maxWidth && currentLine) {
+                    lines.push(currentLine);
+                    currentLine = char;
+                } else {
+                    currentLine = testLine;
+                }
+            });
+
+            if (currentLine) {
+                lines.push(currentLine);
+            }
+            return lines;
+        }
+
+        function drawRoundedRect(ctx, x, y, width, height, radius, fillStyle, strokeStyle, lineWidth) {
+            ctx.beginPath();
+            ctx.moveTo(x + radius, y);
+            ctx.lineTo(x + width - radius, y);
+            ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
+            ctx.lineTo(x + width, y + height - radius);
+            ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
+            ctx.lineTo(x + radius, y + height);
+            ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
+            ctx.lineTo(x, y + radius);
+            ctx.quadraticCurveTo(x, y, x + radius, y);
+            ctx.closePath();
+
+            if (fillStyle) {
+                ctx.fillStyle = fillStyle;
+                ctx.fill();
+            }
+
+            if (strokeStyle && lineWidth) {
+                ctx.strokeStyle = strokeStyle;
+                ctx.lineWidth = lineWidth;
+                ctx.stroke();
+            }
+        }
+
+        async function saveImage() {
+            if (state.isSaving) {
+                return;
+            }
+
+            state.isSaving = true;
+            elements.saveBtnText.textContent = "生成色卡中...";
+
+            try {
+                const resultData = getResultData();
+                const cardStyle = resultData.cardStyle || fallbackResult.cardStyle;
+                const canvas = document.createElement("canvas");
+                canvas.width = 1080;
+                canvas.height = 1600;
+                const ctx = canvas.getContext("2d");
+
+                ctx.fillStyle = "#f3f4f6";
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+                drawRoundedRect(ctx, 60, 60, 960, 1480, 42, "#ffffff");
+
+                ctx.fillStyle = "#9ca3af";
+                ctx.font = "700 28px Arial, sans-serif";
+                ctx.textAlign = "center";
+                ctx.fillText("YOUR TRUE COLOR", 540, 130);
+
+                const cardFill = createGradient(ctx, cardStyle.background, 840, 840);
+                drawRoundedRect(ctx, 120, 180, 840, 840, 46, cardFill, cardStyle.border ? "#e5e7eb" : null, cardStyle.border ? 8 : 0);
+
+                if (resultData.isSSR) {
+                    ctx.save();
+                    ctx.globalAlpha = 0.18;
+                    for (let i = -840; i < 840; i += 40) {
+                        ctx.fillStyle = "#ff00ff";
+                        ctx.fillRect(120 + i, 180, 16, 840);
+                    }
+                    ctx.restore();
+
+                    drawRoundedRect(ctx, 700, 220, 180, 54, 26, "rgba(255,255,255,0.18)", "rgba(255,255,255,0.28)", 2);
+                    ctx.fillStyle = "#ffffff";
+                    ctx.font = "900 22px Arial, sans-serif";
+                    ctx.textAlign = "center";
+                    ctx.fillText("SSR 隐藏款", 790, 255);
+                }
+
+                ctx.fillStyle = cardStyle.textColor || "#ffffff";
+                ctx.textAlign = "left";
+                ctx.font = "900 76px Arial, sans-serif";
+                ctx.fillText(resultData.name, 170, 880);
+                ctx.font = "600 40px Arial, sans-serif";
+                ctx.globalAlpha = 0.92;
+                ctx.fillText(resultData.state, 170, 940);
+                ctx.globalAlpha = 1;
+
+                drawRoundedRect(ctx, 120, 1070, 840, 170, 28, "#f8fafc", "#eef2f7", 2);
+                ctx.fillStyle = "#111111";
+                ctx.font = "700 28px Arial, sans-serif";
+                ctx.fillText("临床表现:", 160, 1128);
+                ctx.fillStyle = "#4b5563";
+                ctx.font = "28px Arial, sans-serif";
+                wrapText(ctx, resultData.desc, 760).slice(0, 4).forEach((line, index) => {
+                    ctx.fillText(line, 160, 1172 + index * 36);
+                });
+
+                drawRoundedRect(ctx, 120, 1270, 405, 160, 28, "rgba(34, 197, 94, 0.08)", "rgba(34, 197, 94, 0.16)", 2);
+                drawRoundedRect(ctx, 555, 1270, 405, 160, 28, "rgba(239, 68, 68, 0.08)", "rgba(239, 68, 68, 0.16)", 2);
+
+                ctx.fillStyle = "#15803d";
+                ctx.font = "800 24px Arial, sans-serif";
+                ctx.fillText("宜", 160, 1320);
+                ctx.fillStyle = "#4b5563";
+                ctx.font = "28px Arial, sans-serif";
+                wrapText(ctx, resultData.do, 320).slice(0, 3).forEach((line, index) => {
+                    ctx.fillText(line, 160, 1370 + index * 34);
+                });
+
+                ctx.fillStyle = "#b91c1c";
+                ctx.font = "800 24px Arial, sans-serif";
+                ctx.fillText("忌", 595, 1320);
+                ctx.fillStyle = "#4b5563";
+                ctx.font = "28px Arial, sans-serif";
+                wrapText(ctx, resultData.dont, 320).slice(0, 3).forEach((line, index) => {
+                    ctx.fillText(line, 595, 1370 + index * 34);
+                });
+
+                ctx.strokeStyle = "#eef2f7";
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.moveTo(120, 1475);
+                ctx.lineTo(960, 1475);
+                ctx.stroke();
+
+                ctx.fillStyle = "rgba(75, 85, 99, 0.7)";
+                ctx.font = "22px monospace";
+                ctx.fillText("MENTAL COLOR TEST", 120, 1515);
+                ctx.textAlign = "right";
+                ctx.fillText("SCAN TO TEST ->", 960, 1515);
+
+                const link = document.createElement("a");
+                link.download = "精神色卡-" + resultData.name + ".png";
+                link.href = canvas.toDataURL("image/png");
+                link.click();
+                showToast("色卡生成成功，快去分享吧。");
+            } catch (error) {
+                console.error("生成截图失败", error);
+                showToast("截图失败了，请稍后再试。");
+            } finally {
+                state.isSaving = false;
+                elements.saveBtnText.textContent = "保存专属色卡";
+            }
+        }
+
+        elements.startBtn.addEventListener("click", startTest);
+        elements.resetBtn.addEventListener("click", resetTest);
+        elements.saveBtn.addEventListener("click", saveImage);
+    </script>
 </body>
 </html>
